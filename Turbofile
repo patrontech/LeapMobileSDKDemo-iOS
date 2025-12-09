@@ -1,0 +1,8 @@
+project="fanaticssdkstaging-2025"
+environment="preprod"
+resources="LeapMobileSDKDemo/Resources"
+manifest="LeapMobileSDKDemo/Supporting Files/Info.plist"
+library_version="1.49.+"
+firebase=true
+version=1.27.2
+
