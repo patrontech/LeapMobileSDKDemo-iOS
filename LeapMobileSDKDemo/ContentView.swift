@@ -54,6 +54,8 @@ struct ContentView: View {
       initializingRootViewController = true
       Task {
         do {
+          // See the SDK documentation for why this must be async.
+          // Although it's async, creating an instance is cheap and fast.
           sdkRootViewController = try await LeapMobileSDK.rootViewController
         } catch {
           try? LeapMobileSDK.logger.error(error)
