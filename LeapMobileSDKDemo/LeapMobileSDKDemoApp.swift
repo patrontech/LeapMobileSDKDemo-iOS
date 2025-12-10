@@ -34,7 +34,11 @@ struct LeapMobileSDKDemoApp: App {
             //
             // To understand why initialization must be async or to pass a custom logger and custom
             // analytics, see the SDK documentation.
-            try await LeapMobileSDK.initialize(secrets: secrets, logging: .builtin)
+            try await LeapMobileSDK.initialize(
+              secrets: secrets,
+//              logging: .logger(DemoLogger()),
+              logging: .builtin,
+            )
             initialization = LeapMobileSDK.initialization
           } catch {
             try? LeapMobileSDK.logger.error(error)

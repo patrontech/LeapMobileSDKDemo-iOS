@@ -14,7 +14,7 @@ struct ContentView: View {
   @State private var sdkRootViewController: UIViewController?
   @State private var sheet: Sheet?
   @State private var deeplinkURL: URL?
-  
+
   var body: some View {
     Group {
       if initialization == .initialized, let sdkRootViewController {
