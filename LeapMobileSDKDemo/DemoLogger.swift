@@ -18,6 +18,6 @@ struct DemoLogger: CustomLogger {
     tags: [LogTag]
   ) {
     if level <= .verbose { return }
-    print("DEMO: \(message)\n")
+    print("DEMO: \(message)")
   }
 }
