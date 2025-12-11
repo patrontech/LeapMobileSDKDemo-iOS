@@ -67,6 +67,7 @@ struct ContentView: View {
       guard initialization == .initialized, !initializingRootViewController, sdkRootViewController == nil else {
         return
       }
+      try? LeapMobileSDK.track(DemoEvent())
       initializingRootViewController = true
       Task {
         do {

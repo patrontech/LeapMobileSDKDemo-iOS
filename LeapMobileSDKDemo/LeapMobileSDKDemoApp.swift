@@ -28,6 +28,8 @@ struct LeapMobileSDKDemoApp: App {
             .accountDeletionApi: "boz"
           ]
           do {
+            let logger = DemoLogger()
+            let analytics = DemoAnalyticsProvider(logger: logger)
             // You should perform initialization as early as possible in your app's lifecycle.
             // Initialization is fairly cheap and does not consume a lot of resources, since
             // most everything is loaded lazily on demand.
@@ -36,8 +38,8 @@ struct LeapMobileSDKDemoApp: App {
             // analytics, see the SDK documentation.
             try await LeapMobileSDK.initialize(
               secrets: secrets,
-//              logging: .logger(DemoLogger()),
-              logging: .builtin,
+              metricsProviders: [analytics],
+              logging: .logger(DemoLogger()),
             )
             initialization = LeapMobileSDK.initialization
           } catch {
