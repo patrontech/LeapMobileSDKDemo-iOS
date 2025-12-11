@@ -27,8 +27,8 @@ struct LeapMobileSDKDemoApp: App {
             .showclixApi: "biz",
             .accountDeletionApi: "boz"
           ]
+          let logger = DemoLogger()
           do {
-            let logger = DemoLogger()
             let analytics = DemoAnalyticsProvider(logger: logger)
             // You should perform initialization as early as possible in your app's lifecycle.
             // Initialization is fairly cheap and does not consume a lot of resources, since
@@ -43,7 +43,7 @@ struct LeapMobileSDKDemoApp: App {
             )
             initialization = LeapMobileSDK.initialization
           } catch {
-            try? LeapMobileSDK.logger.error(error)
+            logger.error(error)
           }
         }
     }
