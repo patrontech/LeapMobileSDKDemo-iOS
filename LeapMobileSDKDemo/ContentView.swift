@@ -28,9 +28,18 @@ struct ContentView: View {
           .tint(.blue)
       }
     }
-    .sheet(item: $sheet) { sheet in
+    .fullScreenCover(item: $sheet) { presentedSheet in
       NavigationStack {
-        sheet.item
+        presentedSheet.item
+          .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+              Button {
+                self.sheet = nil
+              } label: {
+                Image(systemName: "xmark")
+              }
+            }
+          }
       }
     }
     .task {
