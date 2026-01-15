@@ -10,10 +10,20 @@
 			<key>CFBundleURLIconFile</key>
 			<string></string>
 			<key>CFBundleURLName</key>
-			<string>leapsdkdemo</string>
+			<string>fanaticssdkstaging</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>leapsdkdemo</string>
+				<string>fanaticssdkstaging</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>sampleapp</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>sampleapp</string>
 			</array>
 		</dict>
 	</array>
