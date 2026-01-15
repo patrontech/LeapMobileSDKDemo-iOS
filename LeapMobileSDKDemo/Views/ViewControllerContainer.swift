@@ -15,7 +15,13 @@ struct ViewControllerContainer: UIViewControllerRepresentable {
   }
   
   func makeUIViewController(context: Context) -> UIViewController {
-    controller
+    let container = UIViewController()
+    container.addChild(controller)
+    container.view.addSubview(controller.view)
+    controller.view.frame = container.view.bounds
+    controller.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    controller.didMove(toParent: container)
+    return container
   }
 
   func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
