@@ -63,8 +63,6 @@ struct ContentView: View {
     }
   }
   
-  
-  
   // MARK: - Main Content
   
   private var mainContent: some View {
@@ -138,5 +136,3 @@ struct ContentView: View {
     }
   }
 }
-
-
