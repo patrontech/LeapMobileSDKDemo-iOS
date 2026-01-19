@@ -44,6 +44,7 @@ struct ContentView: View {
       sheet.item
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
+        .ignoresSafeArea()
     }
     .fullScreenCover(item: $viewModel.activeFullScreenSheet) { sheet in
       ZStack(alignment: .topLeading) {
