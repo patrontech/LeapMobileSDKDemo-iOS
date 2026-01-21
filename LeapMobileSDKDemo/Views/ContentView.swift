@@ -47,24 +47,26 @@ struct ContentView: View {
         .ignoresSafeArea()
     }
     .fullScreenCover(item: $viewModel.activeFullScreenSheet) { sheet in
-      ZStack(alignment: .topLeading) {
-        
-        sheet.item
-          .ignoresSafeArea()
-        
-        Button {
-          viewModel.closeActiveSheet()
-        } label: {
-          Image(systemName: "xmark")
-            .font(.system(size: 14, weight: .bold))
-            .foregroundColor(.primary)
-            .padding(12)
-            .background(.ultraThinMaterial)
-            .clipShape(Circle())
-            .shadow(radius: 4)
+      NavigationView {
+        ZStack(alignment: .topLeading) {
+          
+          sheet.item
+            .ignoresSafeArea()
+          
+          Button {
+            viewModel.closeActiveSheet()
+          } label: {
+            Image(systemName: "xmark")
+              .font(.system(size: 14, weight: .bold))
+              .foregroundColor(.primary)
+              .padding(12)
+              .background(.ultraThinMaterial)
+              .clipShape(Circle())
+              .shadow(radius: 4)
+          }
+          .padding(.top, 25)
+          .padding(.leading, 16)
         }
-        .padding(.top, 25)
-        .padding(.leading, 16)
       }
     }
   }
