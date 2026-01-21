@@ -67,6 +67,7 @@ final class ContentViewModel: ObservableObject {
   func closeActiveSheet() {
     activeBottomSheet = nil
     activeFullScreenSheet = nil
+    isSamplePresented = false
   }
   
   func openSampleApp() {
@@ -79,7 +80,7 @@ final class ContentViewModel: ObservableObject {
     _ url: URL,
     initialization: LeapMobileSDK.Initialization
   ) {
-    
+    closeActiveSheet()
     if let urlScheme = url.scheme?.lowercased(),
        let scheme = DeeplinkScheme(rawValue: urlScheme) {
       switch scheme {
