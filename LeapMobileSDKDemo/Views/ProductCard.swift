@@ -19,7 +19,9 @@ struct ProductCard: View {
         .frame(width: 80, height: 120)
         .cornerRadius(8)
         .overlay(
-          Image(systemName: "photo")
+          Image(product.image)
+            .resizable()
+            .scaledToFit()
             .foregroundColor(.gray)
         )
       

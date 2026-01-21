@@ -9,6 +9,7 @@ import Foundation
 
 struct Product: Identifiable {
   let id = UUID()
+  let image: String
   let title: String
   let price: String
   let subtitle: String
@@ -18,20 +19,23 @@ struct Product: Identifiable {
 extension Product {
   static let mock: [Product] = [
     Product(
-      title: "2018 Finest Refractor Shohei Ohtani ROOKIE #100 PSA 10 GEM MINT",
-      price: "$2,199",
-      subtitle: "$2,000 offer being considered, act fast",
+      image: "blacklotus",
+      title: "1993 Magic The Gathering MTG Unlimited Black Lotus R A BGS 8.5 Mint",
+      price: "$48,000",
+      subtitle: "Or best offer",
       favorites: 17
     ),
     Product(
-      title: "2021 Pokemon Sword & Shield Evolving Skies Umbreon VMAX #215 PSA 10 GEM MINT",
-      price: "$4,000",
-      subtitle: "$3,400 offer being considered, act fast",
+      image: "charizard",
+      title: "1999 Pokemon Base Set Holo Charizard #4 CGC 9.5 GEM Mint",
+      price: "$4,199",
+      subtitle: "",
       favorites: 15
     ),
     Product(
-      title: "2022 Topps Gypsy Queen Derek Jeter AUTO /25 PSA 9 MINT",
-      price: "$450",
+      image: "pele",
+      title: "1958 Editora Aquarela Soccer Blue Number Pele ROOKIE #10 PSA 4 VGEX",
+      price: "$7,750",
       subtitle: "Offers being negotiated, act fast",
       favorites: 30
     )

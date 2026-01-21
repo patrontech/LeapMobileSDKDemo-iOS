@@ -40,7 +40,13 @@ struct ContentView: View {
           }
       }
     }
-    .fullScreenCover(item: $viewModel.activeSheet) { sheet in
+    .sheet(item: $viewModel.activeBottomSheet) { sheet in
+      sheet.item
+        .presentationDetents([.large])
+        .presentationDragIndicator(.visible)
+        .ignoresSafeArea()
+    }
+    .fullScreenCover(item: $viewModel.activeFullScreenSheet) { sheet in
       ZStack(alignment: .topLeading) {
         
         sheet.item
@@ -92,9 +98,8 @@ struct ContentView: View {
       .cornerRadius(12)
       
       Button {
-        viewModel.openSDK()
       } label: {
-        Text("SDK")
+        Text("Search")
           .fontWeight(.semibold)
           .padding(.horizontal, 16)
           .padding(.vertical, 10)
@@ -111,12 +116,17 @@ struct ContentView: View {
   private var filters: some View {
     ScrollView(.horizontal, showsIndicators: false) {
       HStack(spacing: 8) {
-        FilterChipButton(title: "Buy Now", isSelected: true) {}
+        FilterChipButton(title: "Buy Now", isSelected: true) {
+          viewModel.openSDK(style: .bottomSheet)
+        }
         FilterChipButton(title: "Auction", isSelected: false) {
+          viewModel.openSDK(style: .fullScreen)
+        }
+        FilterChipButton(title: "Premier Auction", isSelected: false) {
           viewModel.openSampleApp()
         }
-        FilterChipButton(title: "Premier Auction", isSelected: false) {}
-        FilterChipButton(title: "Sold", isSelected: false) {}
+        FilterChipButton(title: "Sold", isSelected: false) {
+        }
       }
       .padding(.horizontal)
     }

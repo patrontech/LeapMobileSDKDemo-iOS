@@ -17,12 +17,18 @@ private enum DeeplinkScheme: String {
   case leapSDK = "fanaticssdkstaging"
 }
 
+enum SDKPresentationStyle {
+  case fullScreen
+  case bottomSheet
+}
+
 @MainActor
 final class ContentViewModel: ObservableObject {
   
   // MARK: - UI State
   @Published var isSamplePresented: Bool = false
-  @Published var activeSheet: Sheet?
+  @Published var activeBottomSheet: Sheet?
+  @Published var activeFullScreenSheet: Sheet?
   
   // MARK: - Private
   private var pendingDeeplink: URL?
@@ -39,17 +45,29 @@ final class ContentViewModel: ObservableObject {
   
   // MARK: - User Actions
   
-  func openSDK() {
+  func openSDK(style: SDKPresentationStyle) {
     Task {
       let rootVC = try await LeapMobileSDK.rootViewController
-      //let nav = UINavigationController(rootViewController: rootVC)
-      activeSheet = Sheet(rootVC)
+      openSDK(with: rootVC, style: style)
+    }
+  }
+  
+  private func openSDK(with viewController: UIViewController, style: SDKPresentationStyle) {
+    closeActiveSheet()
+    switch(style) {
+    case .bottomSheet:
+      let nav = UINavigationController(rootViewController: viewController)
+      activeBottomSheet = Sheet(nav)
+    case .fullScreen:
+      activeFullScreenSheet = Sheet(viewController)
     }
   }
   
   @MainActor
   func closeActiveSheet() {
-    activeSheet = nil
+    activeBottomSheet = nil
+    activeFullScreenSheet = nil
+    isSamplePresented = false
   }
   
   func openSampleApp() {
@@ -62,7 +80,7 @@ final class ContentViewModel: ObservableObject {
     _ url: URL,
     initialization: LeapMobileSDK.Initialization
   ) {
-    
+    closeActiveSheet()
     if let urlScheme = url.scheme?.lowercased(),
        let scheme = DeeplinkScheme(rawValue: urlScheme) {
       switch scheme {
@@ -74,9 +92,8 @@ final class ContentViewModel: ObservableObject {
           return
         }
         Task {
-          activeSheet = try await Sheet(
-            LeapMobileSDK.resolveDeepLink(url)
-          )
+          let urlResolved = try await LeapMobileSDK.resolveDeepLink(url)
+          openSDK(with: urlResolved, style: .bottomSheet)
         }
       }
     }
@@ -87,9 +104,8 @@ final class ContentViewModel: ObservableObject {
     }
     
     Task {
-      activeSheet = try await Sheet(
-        LeapMobileSDK.resolveDeepLink(url)
-      )
+      let urlResolved = try await LeapMobileSDK.resolveDeepLink(url)
+      openSDK(with: urlResolved, style: .bottomSheet)
     }
   }
   
