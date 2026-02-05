@@ -21,7 +21,10 @@ LeapMobile SDK allows host applications to embed Leap experiences inside their a
 
 ## Assets / Initial Content
 
-1. This content, including images, must be bundled with the app to ensure offline support.
+1. `content_vN.zip` and `runConfig.json`. Do not unzip `content_vN.zip`.
+2. Unzip `images_full_vN.zip` into a folder so that you can delete and replace it later when you get a new version.
+3. Do **not** put `buildConfig.json` anywhere in the code. You'll need to reference this file, but it should **never** end up in the build.
+4. This content, including images, must be bundled with the app to ensure offline support.
 
 ## SDK Integration
 
