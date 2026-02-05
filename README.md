@@ -21,10 +21,7 @@ LeapMobile SDK allows host applications to embed Leap experiences inside their a
 
 ## Assets / Initial Content
 
-1. Place the following files so that they end up in the build product's bundle resources.
-    1. `content_vN.zip` and `runConfig.json`. Do not unzip `content_vN.zip`.
-    2. Unzip `images_full_vN.zip` into a folder so that you can delete and replace it later when you get a new version.
-    3. Do **not** put `buildConfig.json` anywhere in the code. You'll need to reference this file, but it should **never** end up in the build.
+1. This content, including images, must be bundled with the app to ensure offline support.
 
 ## SDK Integration
 
@@ -36,7 +33,7 @@ LeapMobile SDK is distributed as a private Swift Package.
 2. Go to **File > Add Packages**
 3. Search for the repository SSH url:
    <git@github.com:patrontech/LeapMobileSDK-iOS.git>
-4. Your project must have inside the Other Links Flags property of the Build Settings of your target the flag: -ObjC to be able to handle the .nib files inside the SDK.
+4. To support the .nib files included in the SDK, you must add the -ObjC flag under Build Settings → Other Linker Flags for your target.
 
 # 2. Steps to run the SDK
 
@@ -51,7 +48,7 @@ The SDK must be initialized before any other method is called. Due to internal S
 - `logging`: `LoggingConfiguration`
 
 ## Secrets
-1. The first parameter requires some configuration ids and information that need to be exported in this secrets collection.
+1. The first parameter requires some configuration ids and information that need to be exported in this secrets collection. This particular example is the one that we have used inside our sample app.
  
 ``` swift
     let secrets: [Secret: String] = [
@@ -66,8 +63,8 @@ The SDK must be initialized before any other method is called. Due to internal S
 
 ## Analytics and Logging
 
-1. If you want a custom logger or to wrap an existing logger from the target codebase, implement the `CustomLogger` protocol from the `LeapMobile` module. We do have a more detailed documentation here //ADD URL of Logging Documentation
-2. If you want a custom analytics provider, implement the `MappedProvider` protocol from the `LeapMobileBase` module. We do have a more detailed documentation here //ADD URL of Analytics here
+1. If you want a custom logger or to wrap an existing logger from the target codebase, implement the `CustomLogger` protocol from the `LeapMobile` module. A more detailed documentation will be created for this.
+2. If you want a custom analytics provider, implement the `MappedProvider` protocol from the `LeapMobileBase` module. A more detailed documentation will be created for this.
 
 ``` swift
     let logger = DemoLogger()
@@ -94,11 +91,11 @@ The SDK have a property called initialization that return what is the state of t
 
 ## Usage of the SDK
 
-After the SDK was initialized you can use some of the methods from itself to be able to show the SDK on your application.
+After the SDK was initialized you can use some of the methods to be able to show the SDK on your application.
 
 1. Root Presentation
 
-This presentation is to lead your application direct to the main root of the SDK. You need to ask asynchronous for the main rootViewController and then show it the way you prefer. In our example the SDK is being showed as a modal.
+The SDK provides a main rootViewController that serves as its entry point. Retrieve it asynchronously, then present it using your preferred navigation method (modal, push, etc.). In our example, the SDK is presented modally.
 
 ``` swift
   func openSDK(style: SDKPresentationStyle) {
