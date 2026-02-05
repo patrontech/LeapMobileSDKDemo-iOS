@@ -51,7 +51,9 @@ The SDK must be initialized before any other method is called. Due to internal S
 - `logging`: `LoggingConfiguration`
 
 ## Secrets
-1. The first parameter requires some configuration ids and information that need to be exported in this secrets collection. This particular example is the one that we have used inside our sample app.
+
+1. The first parameter requires some configuration ids and information that need to be exported in this secrets collection. This particular example is the one that we used inside our sample app.
+2. A more detailed documentation for those parameters will be created.
  
 ``` swift
     let secrets: [Secret: String] = [
