@@ -66,7 +66,7 @@ final class ContentViewModel: NSObject, ObservableObject {
     navController.delegate = self
     isAtRootScreen = navController.viewControllers.count == 1
     
-    switch(style) {
+    switch style {
     case .bottomSheet:
       activeBottomSheet = Sheet(navController)
     case .fullScreen:
