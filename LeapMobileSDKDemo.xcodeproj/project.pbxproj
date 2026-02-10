@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		29DEB4852F352DDB00DAB0E5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 29DEB4842F352DDB00DAB0E5 /* README.md */; };
 		F3FB4E412EE7899000534581 /* LeapMobile in Frameworks */ = {isa = PBXBuildFile; productRef = F3FB4E402EE7899000534581 /* LeapMobile */; };
 		F3FB4E432EE7899000534581 /* LeapMobileBase in Frameworks */ = {isa = PBXBuildFile; productRef = F3FB4E422EE7899000534581 /* LeapMobileBase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		29DEB4842F352DDB00DAB0E5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F37B728C2EE76B1A006EA69F /* LeapMobileSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeapMobileSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -52,6 +54,7 @@
 		F37B72832EE76B1A006EA69F = {
 			isa = PBXGroup;
 			children = (
+				29DEB4842F352DDB00DAB0E5 /* README.md */,
 				F37B728E2EE76B1A006EA69F /* LeapMobileSDKDemo */,
 				F37B728D2EE76B1A006EA69F /* Products */,
 			);
@@ -134,6 +137,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				29DEB4852F352DDB00DAB0E5 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
