@@ -33,7 +33,7 @@ LeapMobile SDK is distributed as a private Swift Package.
 ### Steps
 
 1. Open Xcode
-2. Go to **File > Add Packages**
+2. Go to **File > Add Package Dependecies**
 3. Search for the repository SSH url:
    <git@github.com:patrontech/LeapMobileSDK-iOS.git>
 4. To support the .nib files included in the SDK, you must add the -ObjC flag under Build Settings → Other Linker Flags for your target.
