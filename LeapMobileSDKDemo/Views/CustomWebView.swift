@@ -16,7 +16,7 @@ struct CustomWebView: UIViewRepresentable {
   }
   
   func makeCoordinator() -> WebViewCoordinator {
-      WebViewCoordinator()
+    WebViewCoordinator()
   }
   
   func updateUIView(_ uiView: WKWebView, context: Context) {
@@ -24,15 +24,15 @@ struct CustomWebView: UIViewRepresentable {
 }
 
 class WebViewCoordinator: NSObject, WKUIDelegate {
-    func webView(
-        _ webView: WKWebView,
-        createWebViewWith configuration: WKWebViewConfiguration,
-        for navigationAction: WKNavigationAction,
-        windowFeatures: WKWindowFeatures
-    ) -> WKWebView? {
-        if navigationAction.targetFrame == nil {
-            webView.load(navigationAction.request)
-        }
-        return nil
+  func webView(
+    _ webView: WKWebView,
+    createWebViewWith configuration: WKWebViewConfiguration,
+    for navigationAction: WKNavigationAction,
+    windowFeatures: WKWindowFeatures
+  ) -> WKWebView? {
+    if navigationAction.targetFrame == nil {
+      webView.load(navigationAction.request)
     }
+    return nil
+  }
 }

@@ -17,7 +17,7 @@ struct DeeplinkView: View {
     DeeplinkItem(title: "Registration", url: "\(DeeplinkItem.schema)thuziRegistration"),
     DeeplinkItem(title: "Badges", url: "\(DeeplinkItem.schema)huziBadges"),
     DeeplinkItem(title: "Invalid One", url: "\(DeeplinkItem.schema)invalid"),
-    DeeplinkItem(title: "Fanatics Login", url: "https://tickets.fanaticsevents.com/my-tickets/login"),
+    DeeplinkItem(title: "Fanatics Login", url: "https://tickets.fanaticsevents.com/my-tickets/login")
   ]
   
   @Environment(\.openURL) private var openURL
