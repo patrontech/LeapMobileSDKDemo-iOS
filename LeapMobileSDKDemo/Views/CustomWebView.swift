@@ -7,7 +7,6 @@ struct CustomWebView: UIViewRepresentable {
   func makeUIView(context: Context) -> WKWebView {
     let config = WKWebViewConfiguration()
     config.websiteDataStore = dataStore
-    
     let webView = WKWebView(frame: .zero, configuration: config)
     webView.uiDelegate = context.coordinator
     webView.load(URLRequest(url: url))
