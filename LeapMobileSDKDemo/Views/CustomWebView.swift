@@ -12,11 +12,9 @@ struct CustomWebView: UIViewRepresentable {
     webView.load(URLRequest(url: url))
     return webView
   }
-  
   func makeCoordinator() -> WebViewCoordinator {
     WebViewCoordinator()
   }
-  
   func updateUIView(_ uiView: WKWebView, context: Context) {
   }
 }
