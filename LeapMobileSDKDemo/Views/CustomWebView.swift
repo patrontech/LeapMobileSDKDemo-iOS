@@ -4,7 +4,6 @@ import WebKit
 struct CustomWebView: UIViewRepresentable {
   let url: URL
   let dataStore: WKWebsiteDataStore
-  
   func makeUIView(context: Context) -> WKWebView {
     let config = WKWebViewConfiguration()
     config.websiteDataStore = dataStore
