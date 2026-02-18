@@ -8,7 +8,11 @@
 import LeapMobile
 import Combine
 import SwiftUI
+<<<<<<< HEAD
 import WebKit
+=======
+import UIKit
+>>>>>>> master
 
 private enum DeeplinkScheme: String {
   case sampleApp = "sampleapp"
@@ -21,20 +25,21 @@ enum SDKPresentationStyle {
 }
 
 @MainActor
-final class ContentViewModel: ObservableObject {
+final class ContentViewModel: NSObject, ObservableObject {
   
   // MARK: - UI State
   @Published var isDeepLinkViewPresented: Bool = false
   @Published var activeBottomSheet: Sheet?
   @Published var activeFullScreenSheet: Sheet?
   @Published var isWebViewPresented: Bool = false
+  @Published var isAtRootScreen: Bool = true
   
   // MARK: - Private
   private var pendingDeeplink: URL?
   private var didTrackAnalytics = false
   
   // MARK: - Init
-  init() {}
+  override init() {}
   
   // MARK: - Lifecycle
   
@@ -53,12 +58,24 @@ final class ContentViewModel: ObservableObject {
   
   private func openSDK(with viewController: UIViewController, style: SDKPresentationStyle) {
     closeActiveSheet()
-    switch(style) {
+    
+    // Wrap in navigation controller if not already one to enable push navigation
+    let navController: UINavigationController
+    if let existingNav = viewController as? UINavigationController {
+      navController = existingNav
+    } else {
+      navController = UINavigationController(rootViewController: viewController)
+    }
+    
+    // Set up navigation delegate to track when we're at root
+    navController.delegate = self
+    isAtRootScreen = navController.viewControllers.count == 1
+    
+    switch style {
     case .bottomSheet:
-      let nav = UINavigationController(rootViewController: viewController)
-      activeBottomSheet = Sheet(nav)
+      activeBottomSheet = Sheet(navController)
     case .fullScreen:
-      activeFullScreenSheet = Sheet(viewController)
+      activeFullScreenSheet = Sheet(navController)
     }
   }
   
@@ -133,5 +150,18 @@ final class ContentViewModel: ObservableObject {
     try? LeapMobileSDK.track(
       DemoEvent(message: "Custom message from demo!")
     )
+  }
+}
+
+// MARK: - UINavigationControllerDelegate
+extension ContentViewModel: UINavigationControllerDelegate {
+  nonisolated func navigationController(
+    _ navigationController: UINavigationController,
+    didShow viewController: UIViewController,
+    animated: Bool
+  ) {
+    Task { @MainActor in
+      isAtRootScreen = navigationController.viewControllers.count == 1
+    }
   }
 }

@@ -14,10 +14,8 @@ struct DeeplinkView: View {
     DeeplinkItem(title: "Schedule", url: "\(DeeplinkItem.schema)schedule"),
     DeeplinkItem(title: "Talents", url: "\(DeeplinkItem.schema)talents"),
     DeeplinkItem(title: "Brands", url: "\(DeeplinkItem.schema)brands"),
-    DeeplinkItem(title: "Notification Settings", url: "\(DeeplinkItem.schema)notificationSettings"),
-    DeeplinkItem(title: "Notification Inbox", url: "\(DeeplinkItem.schema)notificationInbox"),
-    DeeplinkItem(title: "Thuzi Registration", url: "\(DeeplinkItem.schema)thuziRegistration"),
-    DeeplinkItem(title: "Thuzi Badges", url: "\(DeeplinkItem.schema)huziBadges"),
+    DeeplinkItem(title: "Registration", url: "\(DeeplinkItem.schema)thuziRegistration"),
+    DeeplinkItem(title: "Badges", url: "\(DeeplinkItem.schema)huziBadges"),
     DeeplinkItem(title: "Invalid One", url: "\(DeeplinkItem.schema)invalid"),
     DeeplinkItem(title: "Fanatics Login", url: "https://tickets.fanaticsevents.com/my-tickets/login"),
   ]
@@ -59,9 +57,6 @@ struct DeeplinkCardView: View {
       VStack(alignment: .leading, spacing: 4) {
         Text(item.title)
           .font(.headline)
-        Text(item.url)
-          .font(.caption)
-          .foregroundColor(.gray)
       }
       Spacer()
       Image(systemName: "chevron.right")
