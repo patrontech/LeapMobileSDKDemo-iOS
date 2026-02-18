@@ -8,11 +8,8 @@
 import LeapMobile
 import Combine
 import SwiftUI
-<<<<<<< HEAD
 import WebKit
-=======
 import UIKit
->>>>>>> master
 
 private enum DeeplinkScheme: String {
   case sampleApp = "sampleapp"

@@ -136,14 +136,28 @@ The SDK provides a mechanism to resolve and handle deep links received by the ho
   
 ```
 
-3. SSO Login
+3. Webview DataStore
+
+To share information between webviews from the main app and the SDK, we need some configuration needed for the usage of the webview. The WKWebsiteDataStore needs to be set for the .default one. So we can guarantee its going to be shared to any webview opened inside the SDK. Here is the sample method we used to show this:
+
+```swift
+    func openWebView(urlString: String) -> some View {
+    let url = URL(string: urlString)!
+    let dataStore: WKWebsiteDataStore = .default()
+    return CustomWebView(url: url, dataStore: dataStore)
+  }
+``
+
+4. SSO Login
   This part of the documentation will be done when we develop this feature.
 
-4. SSO Logout
+5. SSO Logout
   This part of the documentation will be done when we develop this feature.
 
-5. SSO State Listener
+6. SSO State Listener
   This part of the documentation will be done when we develop this feature.
+  
+ 
   
 ## Error Handling
 
