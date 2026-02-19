@@ -29,12 +29,43 @@ final class ContentViewModel: NSObject, ObservableObject {
   @Published var activeFullScreenSheet: Sheet?
   @Published var isAtRootScreen: Bool = true
   
+  // MARK: - View Injection (POC)
+  /// The view provider for injecting custom views into the SDK
+  /// This demonstrates the POC for allowing host apps to inject UI
+  private(set) var viewProvider: FanaticsViewProvider?
+  
+  /// Whether view injection is enabled for this demo
+  @Published var isViewInjectionEnabled: Bool = true {
+    didSet {
+      print("🎛️ View injection: \(isViewInjectionEnabled ? "enabled" : "disabled")")
+    }
+  }
+  
   // MARK: - Private
   private var pendingDeeplink: URL?
   private var didTrackAnalytics = false
   
   // MARK: - Init
-  override init() {}
+  override init() {
+    super.init()
+    setupViewInjection()
+  }
+  
+  // MARK: - View Injection Setup
+  
+  private func setupViewInjection() {
+    // Initialize the view provider
+    viewProvider = FanaticsViewProvider()
+    
+    // In real SDK integration, the configuration would be passed during SDK init:
+    // let config = SDKViewInjectionConfiguration.singlePoint(
+    //     viewProvider: viewProvider!,
+    //     injectionPoint: .topTrailing
+    // )
+    // try await LeapMobileSDK.initialize(..., viewInjectionConfig: config)
+    
+    print("✅ View injection provider initialized")
+  }
   
   // MARK: - Lifecycle
   
@@ -47,7 +78,22 @@ final class ContentViewModel: NSObject, ObservableObject {
   func openSDK(style: SDKPresentationStyle) {
     Task {
       let rootVC = try await LeapMobileSDK.rootViewController
-      openSDK(with: rootVC, style: style)
+      
+      // POC: Wrap with view injection if enabled
+      let finalVC: UIViewController
+      if isViewInjectionEnabled, let provider = viewProvider {
+        let config = SDKViewInjectionConfiguration.singlePoint(
+          viewProvider: provider,
+          injectionPoint: .topTrailing
+        )
+        finalVC = SDKOverlayContainer.wrap(rootVC, configuration: config)
+        print("✨ SDK wrapped with view injection")
+      } else {
+        finalVC = rootVC
+        print("📱 SDK presented without view injection")
+      }
+      
+      openSDK(with: finalVC, style: style)
     }
   }
   
@@ -135,6 +181,18 @@ final class ContentViewModel: NSObject, ObservableObject {
     try? LeapMobileSDK.track(
       DemoEvent(message: "Custom message from demo!")
     )
+  }
+  
+  // MARK: - View Injection Demo Methods
+  
+  /// Simulates updating the FanCash balance
+  func simulateBalanceUpdate() {
+    viewProvider?.simulateBalanceUpdate()
+  }
+  
+  /// Toggles view injection on/off for demonstration
+  func toggleViewInjection() {
+    isViewInjectionEnabled.toggle()
   }
 }
 

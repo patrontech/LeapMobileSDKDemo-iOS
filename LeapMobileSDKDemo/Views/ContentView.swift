@@ -128,6 +128,21 @@ struct ContentView: View {
         }
         FilterChipButton(title: "Sold", isSelected: false) {
         }
+        
+        // POC Demo Controls
+        Divider()
+          .frame(height: 30)
+        
+        FilterChipButton(
+          title: viewModel.isViewInjectionEnabled ? "💰 Injection ON" : "💰 Injection OFF",
+          isSelected: viewModel.isViewInjectionEnabled
+        ) {
+          viewModel.toggleViewInjection()
+        }
+        
+        FilterChipButton(title: "🔄 Update Balance", isSelected: false) {
+          viewModel.simulateBalanceUpdate()
+        }
       }
       .padding(.horizontal)
     }
