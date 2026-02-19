@@ -8,6 +8,7 @@
 import LeapMobile
 import Combine
 import SwiftUI
+import WebKit
 import UIKit
 
 private enum DeeplinkScheme: String {
@@ -24,9 +25,10 @@ enum SDKPresentationStyle {
 final class ContentViewModel: NSObject, ObservableObject {
   
   // MARK: - UI State
-  @Published var isSamplePresented: Bool = false
+  @Published var isDeepLinkViewPresented: Bool = false
   @Published var activeBottomSheet: Sheet?
   @Published var activeFullScreenSheet: Sheet?
+  @Published var isWebViewPresented: Bool = false
   @Published var isAtRootScreen: Bool = true
   
   // MARK: - View Injection (POC)
@@ -124,11 +126,21 @@ final class ContentViewModel: NSObject, ObservableObject {
   func closeActiveSheet() {
     activeBottomSheet = nil
     activeFullScreenSheet = nil
-    isSamplePresented = false
+    isDeepLinkViewPresented = false
   }
   
-  func openSampleApp() {
-    isSamplePresented = true
+  func openWebView(urlString: String) -> some View {
+    let url = URL(string: urlString)!
+    let dataStore: WKWebsiteDataStore = .default()
+    return CustomWebView(url: url, dataStore: dataStore)
+  }
+  
+  func openDeepLinkView() {
+    isDeepLinkViewPresented = true
+  }
+  
+  func openSSOWebView() {
+    isWebViewPresented = true
   }
   
   // MARK: - Deeplink Handling
@@ -142,7 +154,7 @@ final class ContentViewModel: NSObject, ObservableObject {
        let scheme = DeeplinkScheme(rawValue: urlScheme) {
       switch scheme {
       case .sampleApp:
-        isSamplePresented = true
+        isDeepLinkViewPresented = true
       case .leapSDK:
         guard initialization == .initialized else {
           pendingDeeplink = url
