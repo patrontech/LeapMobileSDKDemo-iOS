@@ -26,13 +26,13 @@ struct ContentView: View {
     .onOpenURL { url in
       viewModel.handleDeeplink(url, initialization: initialization)
     }
-    .fullScreenCover(isPresented: $viewModel.isSamplePresented) {
+    .fullScreenCover(isPresented: $viewModel.isDeepLinkViewPresented) {
       NavigationStack {
-        SampleAppView()
+        DeeplinkView()
           .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
               Button {
-                viewModel.isSamplePresented = false
+                viewModel.isDeepLinkViewPresented = false
               } label: {
                 Image(systemName: "xmark")
               }
@@ -45,6 +45,13 @@ struct ContentView: View {
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
         .ignoresSafeArea()
+    }
+    .sheet(isPresented: $viewModel.isWebViewPresented) {
+      NavigationStack {
+        viewModel.openWebView(
+          urlString: "https://id.fanatics.com/oauth2/auth?scope=openid&response_type=code&client_id=ficiXzvv9_V95JuAry4yhaKOMHhKG7bXVaoy1335PqOACW24&redirect_uri=https://fanatics-one.com/"
+        )
+      }
     }
     .fullScreenCover(item: $viewModel.activeFullScreenSheet) { sheet in
       ZStack(alignment: .topLeading) {
@@ -124,9 +131,10 @@ struct ContentView: View {
           viewModel.openSDK(style: .fullScreen)
         }
         FilterChipButton(title: "Premier Auction", isSelected: false) {
-          viewModel.openSampleApp()
+          viewModel.openDeepLinkView()
         }
         FilterChipButton(title: "Sold", isSelected: false) {
+          viewModel.openSSOWebView()
         }
       }
       .padding(.horizontal)
