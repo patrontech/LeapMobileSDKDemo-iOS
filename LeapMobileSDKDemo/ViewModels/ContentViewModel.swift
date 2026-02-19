@@ -82,9 +82,9 @@ final class ContentViewModel: NSObject, ObservableObject {
       // POC: Wrap with view injection if enabled
       let finalVC: UIViewController
       if isViewInjectionEnabled, let provider = viewProvider {
-        let config = SDKViewInjectionConfiguration.singlePoint(
+        let config = SDKViewInjectionConfiguration(
           viewProvider: provider,
-          injectionPoint: .topTrailing
+          enabledPoints: [.topTrailing]
         )
         finalVC = SDKOverlayContainer.wrap(rootVC, configuration: config)
         print("SDK wrapped with view injection")

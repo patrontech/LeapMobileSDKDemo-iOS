@@ -112,8 +112,7 @@ public final class SDKOverlayContainer: UIViewController {
     }
     
     private func setupLifecycleObservers() {
-        guard configuration.refreshOnAppForeground else { return }
-        
+        // Auto-refresh on foreground (always enabled for simplicity)
         foregroundObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.willEnterForegroundNotification,
             object: nil,
@@ -147,7 +146,7 @@ public final class SDKOverlayContainer: UIViewController {
     }
     
     private func applyConstraints(for view: UIView, at injectionPoint: ViewInjectionPoint) {
-        let padding = configuration.customPadding
+        let padding: CGFloat = 16
         let safeArea = self.view.safeAreaLayoutGuide
         
         switch injectionPoint {
@@ -184,7 +183,7 @@ public final class SDKOverlayContainer: UIViewController {
         view.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
         
         UIView.animate(
-            withDuration: configuration.animationDuration,
+            withDuration: 0.25,
             delay: 0,
             options: [.curveEaseOut],
             animations: {
@@ -230,7 +229,7 @@ public final class SDKOverlayContainer: UIViewController {
         for (point, view) in injectedViews {
             let shouldHide = provider.shouldHideView(at: point)
             
-            UIView.animate(withDuration: configuration.animationDuration) {
+            UIView.animate(withDuration: 0.25) {
                 view.isHidden = shouldHide
             }
         }
