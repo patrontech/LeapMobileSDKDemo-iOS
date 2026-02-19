@@ -67,7 +67,7 @@ final class LeapMobileSDKAdapter {
         // Store the configuration
         self.viewInjectionConfiguration = viewInjectionConfig
         
-        print("🚀 SDK initialized with view injection: \(viewInjectionConfig != nil)")
+        print("SDK initialized with view injection: \(viewInjectionConfig != nil)")
     }
     
     /// Mock version of LeapMobileSDK.rootViewController that wraps with overlay

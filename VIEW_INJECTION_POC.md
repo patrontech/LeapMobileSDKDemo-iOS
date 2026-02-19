@@ -2,15 +2,15 @@
 
 ## What This Does
 
-Lets Fanatics inject their FanCash balance into the SDK.
+Lets host apps inject custom UI (like balance displays) into the SDK.
 
 ## How It Works
 
 **1. Create a provider:**
 ```swift
-class FanaticsViewProvider: CustomViewProvider {
+class MyViewProvider: CustomViewProvider {
     func view(for injectionPoint: ViewInjectionPoint) -> UIView? {
-        return FanCashBalanceView(balance: 17.08, initials: "AB")
+        return CustomBalanceView(balance: 17.08, initials: "AB")
     }
 }
 ```
@@ -39,8 +39,8 @@ SDK/ViewInjection/
 ### Demo (reference only):
 ```
 Demo/
-├── FanCashBalanceView.swift      - Example view
-└── FanaticsViewProvider.swift    - Example provider
+├── CustomBalanceView.swift      - Example view
+└── DemoViewProvider.swift       - Example provider
 ```
 
 ---
@@ -88,7 +88,7 @@ That's it. 2 changes, ~10 lines of code.
 ## Injection Points
 
 ```swift
-.topTrailing    // Top-right (FanCash)
+.topTrailing    // Top-right (balance, avatar)
 .topLeading     // Top-left
 .topCenter      // Top-center
 .bottomCenter   // Bottom-center

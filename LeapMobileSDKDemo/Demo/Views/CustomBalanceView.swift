@@ -1,14 +1,14 @@
 //
-//  FanCashBalanceView.swift
+//  CustomBalanceView.swift
 //  LeapMobileSDKDemo
 //
-//  Demo FanCash balance view for POC
+//  Demo custom balance view for POC
 //
 
 import UIKit
 
-/// Simple FanCash balance display with avatar
-final class FanCashBalanceView: UIView {
+/// Example custom balance display with user avatar
+final class CustomBalanceView: UIView {
     
     // MARK: - Properties
     
@@ -141,7 +141,6 @@ final class FanCashBalanceView: UIView {
             avatarLabel.centerYAnchor.constraint(equalTo: avatarContainer.centerYAnchor)
         ])
         
-        // Tap to log (demo)
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         addGestureRecognizer(tap)
     }
@@ -171,6 +170,6 @@ final class FanCashBalanceView: UIView {
     }
     
     @objc private func handleTap() {
-        print("💳 FanCash tapped: \(balance)")
+        print("Balance tapped: \(balance)")
     }
 }

@@ -32,7 +32,7 @@ final class ContentViewModel: NSObject, ObservableObject {
   // MARK: - View Injection (POC)
   /// The view provider for injecting custom views into the SDK
   /// This demonstrates the POC for allowing host apps to inject UI
-  private(set) var viewProvider: FanaticsViewProvider?
+  private(set) var viewProvider: DemoViewProvider?
   
   /// Whether view injection is enabled for this demo
   @Published var isViewInjectionEnabled: Bool = true {
@@ -55,7 +55,7 @@ final class ContentViewModel: NSObject, ObservableObject {
   
   private func setupViewInjection() {
     // Initialize the view provider
-    viewProvider = FanaticsViewProvider()
+    viewProvider = DemoViewProvider()
     
     // In real SDK integration, the configuration would be passed during SDK init:
     // let config = SDKViewInjectionConfiguration.singlePoint(
@@ -87,10 +87,10 @@ final class ContentViewModel: NSObject, ObservableObject {
           injectionPoint: .topTrailing
         )
         finalVC = SDKOverlayContainer.wrap(rootVC, configuration: config)
-        print("✨ SDK wrapped with view injection")
+        print("SDK wrapped with view injection")
       } else {
         finalVC = rootVC
-        print("📱 SDK presented without view injection")
+        print("SDK presented without view injection")
       }
       
       openSDK(with: finalVC, style: style)
