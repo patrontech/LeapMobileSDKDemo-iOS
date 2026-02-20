@@ -50,25 +50,25 @@ import UIKit
 ///
 final class LeapMobileSDKAdapter {
     // MARK: - Properties
-    
+
     /// Stored view injection configuration
     private static var viewInjectionConfiguration: SDKViewInjectionConfiguration?
-    
+
     /// Mock SDK root view controller (in real SDK, this would be the actual content)
     private static var mockRootViewController: UIViewController?
-    
+
     // MARK: - Mock SDK Methods
-    
+
     /// Mock version of LeapMobileSDK.initialize() with view injection support
     static func initializeSDK(
         viewInjectionConfig: SDKViewInjectionConfiguration? = nil
     ) async throws {
         // Store the configuration
         self.viewInjectionConfiguration = viewInjectionConfig
-        
+
         print("SDK initialized with view injection: \(viewInjectionConfig != nil)")
     }
-    
+
     /// Mock version of LeapMobileSDK.rootViewController that wraps with overlay
     static func getRootViewController(baseViewController: UIViewController) -> UIViewController {
         // This demonstrates how the SDK would wrap its content VC
@@ -82,7 +82,7 @@ final class LeapMobileSDKAdapter {
 // MARK: - Extension for ContentViewModel
 
 extension ContentViewModel {
-    
+
     /// Modified version of openSDK that uses the adapter to wrap the view controller
     ///
     /// This demonstrates how the host app would use the SDK's rootViewController
@@ -92,15 +92,15 @@ extension ContentViewModel {
         style: SDKPresentationStyle
     ) {
         closeActiveSheet()
-        
+
         // In real implementation, you'd just call:
         // let rootVC = try await LeapMobileSDK.rootViewController
         // The SDK would internally wrap it with SDKOverlayContainer
-        
+
         let wrappedVC = LeapMobileSDKAdapter.getRootViewController(
             baseViewController: baseViewController
         )
-        
+
         // Wrap in navigation controller if needed
         let navController: UINavigationController
         if let existingNav = wrappedVC as? UINavigationController {
@@ -108,11 +108,11 @@ extension ContentViewModel {
         } else {
             navController = UINavigationController(rootViewController: wrappedVC)
         }
-        
+
         // Set up navigation delegate
         navController.delegate = self
         isAtRootScreen = navController.viewControllers.count == 1
-        
+
         switch style {
         case .bottomSheet:
             activeBottomSheet = Sheet(navController)
