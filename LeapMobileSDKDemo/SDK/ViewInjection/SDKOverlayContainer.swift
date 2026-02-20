@@ -19,7 +19,6 @@ import UIKit
 /// - Note: This is an internal SDK component. Host apps interact with it indirectly
 ///   through the `CustomViewProvider` protocol and configuration.
 public final class SDKOverlayContainer: UIViewController {
-    
     // MARK: - Properties
     
     /// The SDK's actual content view controller

@@ -9,7 +9,6 @@ import Foundation
 
 /// Configuration for view injection
 public struct SDKViewInjectionConfiguration {
-    
     /// The provider that supplies custom views
     public weak var viewProvider: CustomViewProvider?
     

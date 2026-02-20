@@ -9,7 +9,6 @@ import UIKit
 
 /// Host apps implement this to inject custom views into the SDK
 public protocol CustomViewProvider: AnyObject {
-    
     /// Return a view to inject, or nil
     func view(for injectionPoint: ViewInjectionPoint) -> UIView?
     

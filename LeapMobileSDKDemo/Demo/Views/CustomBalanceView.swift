@@ -9,7 +9,6 @@ import UIKit
 
 /// Example custom balance display with user avatar
 final class CustomBalanceView: UIView {
-    
     // MARK: - Properties
     
     var balance: Decimal = 17.08 {

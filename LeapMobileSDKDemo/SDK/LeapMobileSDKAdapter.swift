@@ -49,7 +49,6 @@ import UIKit
 /// ```
 ///
 final class LeapMobileSDKAdapter {
-    
     // MARK: - Properties
     
     /// Stored view injection configuration

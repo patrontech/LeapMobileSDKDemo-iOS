@@ -9,7 +9,6 @@ import UIKit
 
 /// Example provider implementation
 final class DemoViewProvider: CustomViewProvider {
-    
     private var balanceView: CustomBalanceView?
     private var currentBalance: Decimal = 17.08
     private var userInitials: String = "AB"
