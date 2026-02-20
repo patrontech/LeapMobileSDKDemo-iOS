@@ -281,5 +281,3 @@ public extension SDKOverlayContainer {
         )
     }
 }
-
-

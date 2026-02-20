@@ -121,5 +121,3 @@ extension ContentViewModel {
         }
     }
 }
-
-
