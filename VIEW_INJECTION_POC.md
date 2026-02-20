@@ -27,16 +27,16 @@ try await LeapMobileSDK.initialize(..., viewInjectionConfig: config)
 
 ## Files
 
-### For SDK (copy these 4 files):
+### For SDK (copy these 4 files)
 ```
 SDK/ViewInjection/
 ├── CustomViewProvider.swift      - Protocol
-├── ViewInjectionPoint.swift      - Positions enum  
+├── ViewInjectionPoint.swift      - Positions enum
 ├── SDKViewInjectionConfiguration.swift - Config
 └── SDKOverlayContainer.swift     - Container that positions views
 ```
 
-### Demo (reference only):
+### Demo (reference only)
 ```
 Demo/
 ├── CustomBalanceView.swift      - Example view
