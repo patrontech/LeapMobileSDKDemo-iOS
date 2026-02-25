@@ -372,13 +372,22 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		F3FB4E3F2EE7899000534581 /* XCLocalSwiftPackageReference "../LeapMobileSDK" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../LeapMobileSDK;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		F3FB4E402EE7899000534581 /* LeapMobile */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = F3FB4E3F2EE7899000534581 /* XCLocalSwiftPackageReference "../LeapMobileSDK" */;
 			productName = LeapMobile;
 		};
 		F3FB4E422EE7899000534581 /* LeapMobileBase */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = F3FB4E3F2EE7899000534581 /* XCLocalSwiftPackageReference "../LeapMobileSDK" */;
 			productName = LeapMobileBase;
 		};
 /* End XCSwiftPackageProductDependency section */

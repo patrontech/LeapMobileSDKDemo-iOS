@@ -176,3 +176,10 @@ The types of error that the SDK might throw are the ones listed here:
 - Forgetting to initialize the SDK before accessing any method
 - Shipping `buildConfig.json` in the app bundle
 - Not embedding the rootViewController in a UINavigationController when required by internal flows
+- **Package resolution errors**: If you see Swift Package Manager errors after pulling updates, clear your Xcode caches. See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+- **Missing LeapMobileSDK folder**: Make sure both repositories are cloned in the same parent directory
+- **"Module not found" errors**: Verify the local package reference is pointing to `../LeapMobileSDK`
+
+## Troubleshooting
+
+For detailed troubleshooting steps, especially for package resolution errors after updating, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).
