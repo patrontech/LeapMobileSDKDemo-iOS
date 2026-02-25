@@ -124,17 +124,20 @@ struct ContentView: View {
   private var filters: some View {
     ScrollView(.horizontal, showsIndicators: false) {
       HStack(spacing: 8) {
-        FilterChipButton(title: "Buy Now", isSelected: true) {
+        FilterChipButton(title: "Open SDK", isSelected: true) {
           viewModel.openSDK(style: .bottomSheet)
         }
-        FilterChipButton(title: "Auction", isSelected: false) {
-          viewModel.openSDK(style: .fullScreen)
+        FilterChipButton(title: "Logout", isSelected: false) {
+          viewModel.logoutUser()
         }
-        FilterChipButton(title: "Premier Auction", isSelected: false) {
+        FilterChipButton(title: "Deeplink", isSelected: false) {
           viewModel.openDeepLinkView()
         }
-        FilterChipButton(title: "Sold", isSelected: false) {
+        FilterChipButton(title: "SSOWebView", isSelected: false) {
           viewModel.openSSOWebView()
+        }
+        FilterChipButton(title: "Open SDK Full", isSelected: false) {
+          viewModel.openSDK(style: .fullScreen)
         }
       }
       .padding(.horizontal)
