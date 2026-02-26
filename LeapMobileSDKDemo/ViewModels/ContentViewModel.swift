@@ -97,6 +97,12 @@ final class ContentViewModel: NSObject, ObservableObject {
     isWebViewPresented = true
   }
   
+  func logoutUser() {
+    Task {
+      try await LeapMobileSDK.logoutUser()
+    }
+  }
+  
   // MARK: - Deeplink Handling
   
   func handleDeeplink(
