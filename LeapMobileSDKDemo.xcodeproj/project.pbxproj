@@ -120,7 +120,6 @@
 			mainGroup = F37B72832EE76B1A006EA69F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F3FB4E3F2EE7899000534581 /* XCLocalSwiftPackageReference "../LeapMobileSDK" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F37B728D2EE76B1A006EA69F /* Products */;
