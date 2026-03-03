@@ -8,14 +8,14 @@ enum IconSource {
 struct CircularIconButton: View {
   let icon: IconSource
   let action: () -> Void
-  
+
   var backgroundColor: Color = .white
   var iconColor: Color = .blue
   var iconSize: CGFloat = 20
   var padding: CGFloat = 12
   var shadowRadius: CGFloat = 8
   var shadowOpacity: CGFloat = 0.15
-  
+
   var body: some View {
     Button(action: action) {
       iconImage
@@ -26,7 +26,7 @@ struct CircularIconButton: View {
         .shadow(color: Color.black.opacity(shadowOpacity), radius: shadowRadius, x: 0, y: 2)
     }
   }
-  
+
   @ViewBuilder
   private var iconImage: some View {
     switch icon {
@@ -49,12 +49,12 @@ struct CircularIconButton: View {
       icon: .systemName("chevron.left"),
       action: {}
     )
-    
+
     CircularIconButton(
       icon: .assetName("chevron"),
       action: {}
     )
-    
+
     CircularIconButton(
       icon: .systemName("xmark"),
       action: {},
@@ -62,7 +62,7 @@ struct CircularIconButton: View {
       iconColor: .white,
       iconSize: 16
     )
-    
+
     CircularIconButton(
       icon: .systemName("heart.fill"),
       action: {},
