@@ -31,20 +31,34 @@ struct ContentView: View {
         DeeplinkView()
           .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-              Button {
-                viewModel.isDeepLinkViewPresented = false
-              } label: {
-                Image(systemName: "xmark")
-              }
+              CircularIconButton(
+                icon: .assetName("chevron"),
+                action: { viewModel.isDeepLinkViewPresented = false },
+                backgroundColor: .white,
+                iconColor: .blue,
+                iconSize: 20,
+                padding: 12
+              )
             }
           }
       }
     }
     .sheet(item: $viewModel.activeBottomSheet) { sheet in
-      sheet.item
-        .presentationDetents([.large])
-        .presentationDragIndicator(.visible)
-        .ignoresSafeArea()
+      ZStack(alignment: .topLeading) {
+        sheet.item
+          .presentationDetents([.large])
+          .presentationDragIndicator(.visible)
+          .ignoresSafeArea()
+        
+        if viewModel.isAtRootScreen {
+          CircularIconButton(
+            icon: .assetName("chevron"),
+            action: { viewModel.closeActiveSheet() }
+          )
+          .padding(.top, 16)
+          .padding(.leading, 16)
+        }
+      }
     }
     .sheet(isPresented: $viewModel.isWebViewPresented) {
       NavigationStack {
@@ -59,18 +73,11 @@ struct ContentView: View {
           .ignoresSafeArea()
         
         if viewModel.isAtRootScreen {
-          Button {
-            viewModel.closeActiveSheet()
-          } label: {
-            Image(systemName: "xmark")
-              .font(.system(size: 14, weight: .bold))
-              .foregroundColor(.primary)
-              .padding(12)
-              .background(.ultraThinMaterial)
-              .clipShape(Circle())
-              .shadow(radius: 4)
-          }
-          .padding(.top, 50)
+          CircularIconButton(
+            icon: .assetName("chevron"),
+            action: { viewModel.closeActiveSheet() }
+          )
+          .padding(.top, 8)
           .padding(.leading, 16)
         }
       }

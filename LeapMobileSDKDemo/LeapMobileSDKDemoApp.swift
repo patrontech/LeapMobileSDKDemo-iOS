@@ -45,6 +45,10 @@ struct LeapMobileSDKDemoApp: App {
         logging: .logger(logger)
       )
       initialization = LeapMobileSDK.initialization
+
+      // Trigger OTA check immediately after initialization
+      logger.info("Triggering OTA check after initialization")
+      NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
     } catch {
       logger.error(error)
     }
