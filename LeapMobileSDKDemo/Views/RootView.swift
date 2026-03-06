@@ -11,8 +11,12 @@ import SwiftUI
 struct RootView: View {
 
   @Binding var initialization: LeapMobileSDK.Initialization
+  @Binding var deeplinkToHandle: URL?
 
   var body: some View {
-    ContentView(initialization: $initialization)
+    ContentView(
+      initialization: $initialization,
+      deeplinkToHandle: $deeplinkToHandle
+    )
   }
 }

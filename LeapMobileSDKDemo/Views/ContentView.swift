@@ -10,6 +10,7 @@ import LeapMobile
 struct ContentView: View {
   
   @Binding var initialization: LeapMobileSDK.Initialization
+  @Binding var deeplinkToHandle: URL?
   @StateObject private var viewModel = ContentViewModel()
   let products = Product.mock
   
@@ -25,6 +26,12 @@ struct ContentView: View {
     }
     .onOpenURL { url in
       viewModel.handleDeeplink(url, initialization: initialization)
+    }
+    .onChange(of: deeplinkToHandle) { _, newValue in
+      if let url = newValue {
+        viewModel.handleDeeplink(url, initialization: initialization)
+        deeplinkToHandle = nil
+      }
     }
     .fullScreenCover(isPresented: $viewModel.isDeepLinkViewPresented) {
       NavigationStack {
@@ -145,6 +152,20 @@ struct ContentView: View {
         }
         FilterChipButton(title: "Open SDK Full", isSelected: false) {
           viewModel.openSDK(style: .fullScreen)
+        }
+        
+        // Notification test buttons
+        FilterChipButton(title: "🔔 Schedule", isSelected: false) {
+          viewModel.sendTestNotification(.rewards)
+        }
+        FilterChipButton(title: "🔔 Talents", isSelected: false) {
+          viewModel.sendTestNotification(.events)
+        }
+        FilterChipButton(title: "🔔 Brands", isSelected: false) {
+          viewModel.sendTestNotification(.profile)
+        }
+        FilterChipButton(title: "🔔 Sample", isSelected: false) {
+          viewModel.sendTestNotification(.sampleApp)
         }
       }
       .padding(.horizontal)
