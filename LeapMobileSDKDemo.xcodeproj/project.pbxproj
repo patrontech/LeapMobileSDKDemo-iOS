@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		29A24EA12F5B6B3B00D029B3 /* LeapMobile in Frameworks */ = {isa = PBXBuildFile; productRef = 29A24EA02F5B6B3B00D029B3 /* LeapMobile */; };
+		29A24EA32F5B6B3B00D029B3 /* LeapMobileBase in Frameworks */ = {isa = PBXBuildFile; productRef = 29A24EA22F5B6B3B00D029B3 /* LeapMobileBase */; };
 		29DEB4852F352DDB00DAB0E5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 29DEB4842F352DDB00DAB0E5 /* README.md */; };
 		F3FB4E412EE7899000534581 /* LeapMobile in Frameworks */ = {isa = PBXBuildFile; productRef = F3FB4E402EE7899000534581 /* LeapMobile */; };
 		F3FB4E432EE7899000534581 /* LeapMobileBase in Frameworks */ = {isa = PBXBuildFile; productRef = F3FB4E422EE7899000534581 /* LeapMobileBase */; };
@@ -45,6 +47,8 @@
 			files = (
 				F3FB4E412EE7899000534581 /* LeapMobile in Frameworks */,
 				F3FB4E432EE7899000534581 /* LeapMobileBase in Frameworks */,
+				29A24EA12F5B6B3B00D029B3 /* LeapMobile in Frameworks */,
+				29A24EA32F5B6B3B00D029B3 /* LeapMobileBase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +94,8 @@
 			packageProductDependencies = (
 				F3FB4E402EE7899000534581 /* LeapMobile */,
 				F3FB4E422EE7899000534581 /* LeapMobileBase */,
+				29A24EA02F5B6B3B00D029B3 /* LeapMobile */,
+				29A24EA22F5B6B3B00D029B3 /* LeapMobileBase */,
 			);
 			productName = LeapMobileSDKDemo;
 			productReference = F37B728C2EE76B1A006EA69F /* LeapMobileSDKDemo.app */;
@@ -120,6 +126,7 @@
 			mainGroup = F37B72832EE76B1A006EA69F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				29A24E9F2F5B6B3B00D029B3 /* XCRemoteSwiftPackageReference "LeapMobileSDK-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F37B728D2EE76B1A006EA69F /* Products */;
@@ -371,7 +378,28 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		29A24E9F2F5B6B3B00D029B3 /* XCRemoteSwiftPackageReference "LeapMobileSDK-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:patrontech/LeapMobileSDK-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		29A24EA02F5B6B3B00D029B3 /* LeapMobile */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 29A24E9F2F5B6B3B00D029B3 /* XCRemoteSwiftPackageReference "LeapMobileSDK-iOS" */;
+			productName = LeapMobile;
+		};
+		29A24EA22F5B6B3B00D029B3 /* LeapMobileBase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 29A24E9F2F5B6B3B00D029B3 /* XCRemoteSwiftPackageReference "LeapMobileSDK-iOS" */;
+			productName = LeapMobileBase;
+		};
 		F3FB4E402EE7899000534581 /* LeapMobile */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LeapMobile;

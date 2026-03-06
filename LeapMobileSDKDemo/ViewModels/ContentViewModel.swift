@@ -118,9 +118,12 @@ final class ContentViewModel: NSObject, ObservableObject {
   }
   
   func logoutUser() {
+    /*
+     This will be uncommented as soon we have the new SDK on master
     Task {
       try await LeapMobileSDK.logoutUser()
     }
+    */
   }
   
   // MARK: - Notification Testing
