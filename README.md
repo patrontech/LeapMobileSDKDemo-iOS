@@ -176,3 +176,55 @@ The types of error that the SDK might throw are the ones listed here:
 - Forgetting to initialize the SDK before accessing any method
 - Shipping `buildConfig.json` in the app bundle
 - Not embedding the rootViewController in a UINavigationController when required by internal flows
+
+---
+
+# 3. Push Notifications & Deeplink Testing
+
+This demo app includes built-in tools to test push notifications and deeplink handling.
+
+## In-App Notification Simulator
+
+The app includes filter chip buttons that trigger local push notifications with deeplink payloads:
+
+- **🔔 Schedule** - Sends a notification that opens `fanaticssdkstaging://schedule`
+- **🔔 Talents** - Sends a notification that opens `fanaticssdkstaging://talents`
+- **🔔 Brands** - Sends a notification that opens `fanaticssdkstaging://brands`
+- **🔔 Sample** - Sends a notification that opens `sampleapp://test`
+
+### How it works:
+
+1. Tap any notification test button
+2. A local notification will be scheduled (3 second delay)
+3. The notification appears in the notification center
+4. Tap the notification to open the app with the deeplink
+5. The SDK resolves the deeplink and displays the appropriate content
+
+### Permission Handling
+
+On first launch, the app automatically requests notification permissions. If denied, you can enable them in:
+**Settings app → Notifications → LeapMobileSDKDemo → Allow Notifications**
+
+## Available Deeplink Schemes
+
+1. **LeapSDK Scheme**: `fanaticssdkstaging://`
+   - Resolves through the LeapMobileSDK
+   - Examples: `fanaticssdkstaging://schedule`, `fanaticssdkstaging://talents`, `fanaticssdkstaging://brands`
+
+2. **Sample App Scheme**: `sampleapp://`
+   - Opens the demo deeplink view
+   - Example: `sampleapp://test`
+
+## Testing Flow
+
+1. Build and run the app in simulator
+2. Grant notification permissions when prompted
+3. Tap any "🔔" button to schedule a test notification
+4. Wait 3 seconds for the notification to appear
+5. Tap the notification to test the deeplink flow
+
+### Debugging Tips:
+- Check console logs for SDK initialization status and deeplink processing
+- Verify notification permissions in Settings app
+- Ensure SDK is fully initialized before testing deeplinks
+- Use the "Deeplink" button to manually test URL input

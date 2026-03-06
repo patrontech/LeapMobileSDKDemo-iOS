@@ -12,12 +12,14 @@ import SwiftUI
 struct LeapMobileSDKDemoApp: App {
 
   @State private var initialization: LeapMobileSDK.Initialization = .uninitialized
+  @State private var deeplinkToHandle: URL?
 
   var body: some Scene {
     WindowGroup {
-      RootView(initialization: $initialization)
+      RootView(initialization: $initialization, deeplinkToHandle: $deeplinkToHandle)
         .task {
           await initializeSDKIfNeeded()
+          await setupNotifications()
         }
     }
   }
@@ -51,6 +53,20 @@ struct LeapMobileSDKDemoApp: App {
       NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
     } catch {
       logger.error(error)
+    }
+  }
+  
+  @MainActor
+  private func setupNotifications() async {
+    let notificationManager = NotificationManager.shared
+    
+    // Request notification permissions
+    try? await notificationManager.requestAuthorization()
+    await notificationManager.checkAuthorizationStatus()
+    
+    // Set up deeplink handler from notifications
+    notificationManager.setDeeplinkHandler { [self] url in
+      deeplinkToHandle = url
     }
   }
 }

@@ -21,6 +21,13 @@ enum SDKPresentationStyle {
   case bottomSheet
 }
 
+enum TestNotificationType {
+  case rewards
+  case events
+  case profile
+  case sampleApp
+}
+
 @MainActor
 final class ContentViewModel: NSObject, ObservableObject {
   
@@ -47,21 +54,30 @@ final class ContentViewModel: NSObject, ObservableObject {
   // MARK: - User Actions
   
   func openSDK(style: SDKPresentationStyle) {
+    print("📱 Opening SDK with style: \(style)")
     Task {
-      let rootVC = try await LeapMobileSDK.rootViewController
-      openSDK(with: rootVC, style: style)
+      do {
+        let rootVC = try await LeapMobileSDK.rootViewController
+        print("✅ Got SDK root view controller")
+        openSDK(with: rootVC, style: style)
+      } catch {
+        print("❌ Failed to get SDK root view controller: \(error)")
+      }
     }
   }
   
   private func openSDK(with viewController: UIViewController, style: SDKPresentationStyle) {
+    print("📱 Opening SDK with view controller: \(type(of: viewController))")
     closeActiveSheet()
     
     // Wrap in navigation controller if not already one to enable push navigation
     let navController: UINavigationController
     if let existingNav = viewController as? UINavigationController {
       navController = existingNav
+      print("✅ Using existing navigation controller")
     } else {
       navController = UINavigationController(rootViewController: viewController)
+      print("✅ Created new navigation controller")
     }
     
     // Set up navigation delegate to track when we're at root
@@ -70,10 +86,14 @@ final class ContentViewModel: NSObject, ObservableObject {
     
     switch style {
     case .bottomSheet:
+      print("📱 Presenting as bottom sheet")
       activeBottomSheet = Sheet(navController)
     case .fullScreen:
+      print("📱 Presenting as full screen")
       activeFullScreenSheet = Sheet(navController)
     }
+    
+    print("✅ SDK presentation triggered")
   }
   
   @MainActor
@@ -103,38 +123,76 @@ final class ContentViewModel: NSObject, ObservableObject {
     }
   }
   
+  // MARK: - Notification Testing
+  
+  func sendTestNotification(_ type: TestNotificationType) {
+    Task {
+      let notificationManager = NotificationManager.shared
+      
+      do {
+        switch type {
+        case .rewards:
+          try await notificationManager.sendRewardsNotification()
+        case .events:
+          try await notificationManager.sendEventsNotification()
+        case .profile:
+          try await notificationManager.sendProfileNotification()
+        case .sampleApp:
+          try await notificationManager.sendSampleAppNotification()
+        }
+      } catch {
+        print("Failed to send test notification: \(error)")
+      }
+    }
+  }
+  
   // MARK: - Deeplink Handling
   
   func handleDeeplink(
     _ url: URL,
     initialization: LeapMobileSDK.Initialization
   ) {
-    closeActiveSheet()
-    if let urlScheme = url.scheme?.lowercased(),
-       let scheme = DeeplinkScheme(rawValue: urlScheme) {
-      switch scheme {
-      case .sampleApp:
-        isDeepLinkViewPresented = true
-      case .leapSDK:
-        guard initialization == .initialized else {
-          pendingDeeplink = url
-          return
-        }
-        Task {
-          let urlResolved = try await LeapMobileSDK.resolveDeepLink(url)
-          openSDK(with: urlResolved, style: .bottomSheet)
-        }
-      }
-    }
+    print("🔗 Deeplink received: \(url.absoluteString)")
+    print("🔗 SDK initialization state: \(initialization)")
     
+    closeActiveSheet()
+    
+    // Check if SDK is initialized
     guard initialization == .initialized else {
+      print("⏳ SDK not initialized yet, storing deeplink for later")
       pendingDeeplink = url
       return
     }
     
-    Task {
-      let urlResolved = try await LeapMobileSDK.resolveDeepLink(url)
-      openSDK(with: urlResolved, style: .bottomSheet)
+    // Parse the URL scheme
+    guard let urlScheme = url.scheme?.lowercased() else {
+      print("❌ No URL scheme found")
+      return
+    }
+    
+    guard let scheme = DeeplinkScheme(rawValue: urlScheme) else {
+      print("❌ Unknown URL scheme: \(urlScheme)")
+      return
+    }
+    
+    // Handle based on scheme type
+    switch scheme {
+    case .sampleApp:
+      print("✅ Opening sample app deeplink view")
+      isDeepLinkViewPresented = true
+      
+    case .leapSDK:
+      print("🚀 Resolving LeapSDK deeplink...")
+      Task {
+        do {
+          let urlResolved = try await LeapMobileSDK.resolveDeepLink(url)
+          print("✅ LeapSDK deeplink resolved successfully")
+          openSDK(with: urlResolved, style: .bottomSheet)
+        } catch {
+          print("❌ Failed to resolve LeapSDK deeplink: \(error)")
+          print("❌ Error details: \(error.localizedDescription)")
+        }
+      }
     }
   }
   
