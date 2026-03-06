@@ -55,15 +55,15 @@ struct LeapMobileSDKDemoApp: App {
       logger.error(error)
     }
   }
-  
+
   @MainActor
   private func setupNotifications() async {
     let notificationManager = NotificationManager.shared
-    
+
     // Request notification permissions
     try? await notificationManager.requestAuthorization()
     await notificationManager.checkAuthorizationStatus()
-    
+
     // Set up deeplink handler from notifications
     notificationManager.setDeeplinkHandler { [self] url in
       deeplinkToHandle = url
