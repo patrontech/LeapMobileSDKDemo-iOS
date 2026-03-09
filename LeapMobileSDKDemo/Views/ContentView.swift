@@ -51,21 +51,10 @@ struct ContentView: View {
       }
     }
     .sheet(item: $viewModel.activeBottomSheet) { sheet in
-      ZStack(alignment: .topLeading) {
-        sheet.item
-          .presentationDetents([.large])
-          .presentationDragIndicator(.visible)
-          .ignoresSafeArea()
-        
-        if viewModel.isAtRootScreen {
-          CircularIconButton(
-            icon: .assetName("chevron"),
-            action: { viewModel.closeActiveSheet() }
-          )
-          .padding(.top, 16)
-          .padding(.leading, 16)
-        }
-      }
+      sheet.item
+        .presentationDetents([.large])
+        .presentationDragIndicator(.visible)
+        .ignoresSafeArea()
     }
     .sheet(isPresented: $viewModel.isWebViewPresented) {
       NavigationStack {
