@@ -33,7 +33,9 @@ struct ContentView: View {
         deeplinkToHandle = nil
       }
     }
-    .fullScreenCover(isPresented: $viewModel.isDeepLinkViewPresented) {
+    .fullScreenCover(isPresented: $viewModel.isDeepLinkViewPresented, onDismiss: {
+      viewModel.restoreSDKState()
+    }) {
       NavigationStack {
         DeeplinkView()
           .toolbar {
