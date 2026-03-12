@@ -39,12 +39,14 @@ struct LeapMobileSDKDemoApp: App {
 
     let logger = DemoLogger()
     let analytics = DemoAnalyticsProvider(logger: logger)
+    let deepLinkHandler = DemoAppDeepLinkHandler()
 
     do {
       try await LeapMobileSDK.initialize(
         secrets: secrets,
         metricsProviders: [analytics],
-        logging: .logger(logger)
+        logging: .logger(logger),
+        deepLinkHandler: deepLinkHandler
       )
       initialization = LeapMobileSDK.initialization
 

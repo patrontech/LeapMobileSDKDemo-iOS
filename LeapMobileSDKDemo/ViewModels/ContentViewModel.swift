@@ -41,9 +41,6 @@ final class ContentViewModel: NSObject, ObservableObject {
   // MARK: - Private
   private var pendingDeeplink: URL?
   private var didTrackAnalytics = false
-  private var savedBottomSheet: Sheet?
-  private var savedFullScreenSheet: Sheet?
-  private var shouldPopAfterRestore = false
   
   // MARK: - Init
   override init() {}
@@ -113,53 +110,9 @@ final class ContentViewModel: NSObject, ObservableObject {
   }
   
   func openDeepLinkView() {
-    // Save current SDK state to restore later
-    savedBottomSheet = activeBottomSheet
-    savedFullScreenSheet = activeFullScreenSheet
-
-    // Mark that we should pop navigation after restore
-    // (to close the webview that triggered this deeplink)
-    shouldPopAfterRestore = true
-
-    // Temporarily dismiss SDK sheets to present deeplink view
-    activeBottomSheet = nil
-    activeFullScreenSheet = nil
-
     isDeepLinkViewPresented = true
   }
 
-  func restoreSDKState() {
-    // Restore SDK state after deeplink view is dismissed
-    if let savedSheet = savedBottomSheet {
-      print("✅ Restoring bottom sheet")
-      activeBottomSheet = savedSheet
-      savedBottomSheet = nil
-
-      // Pop back one level to close the webview that triggered the redirect
-      if shouldPopAfterRestore {
-        if let navController = savedSheet.item as? UINavigationController {
-          print("🔙 Popping navigation to close webview")
-          navController.popViewController(animated: true)
-        }
-        shouldPopAfterRestore = false
-      }
-    }
-    if let savedSheet = savedFullScreenSheet {
-      print("✅ Restoring full screen sheet")
-      activeFullScreenSheet = savedSheet
-      savedFullScreenSheet = nil
-
-      // Pop back one level to close the webview that triggered the redirect
-      if shouldPopAfterRestore {
-        if let navController = savedSheet.item as? UINavigationController {
-          print("🔙 Popping navigation to close webview")
-          navController.popViewController(animated: true)
-        }
-        shouldPopAfterRestore = false
-      }
-    }
-  }
-  
   func openSSOWebView() {
     isWebViewPresented = true
   }
@@ -226,13 +179,13 @@ final class ContentViewModel: NSObject, ObservableObject {
     // Handle based on scheme type
     switch scheme {
     case .sampleApp:
-      print("✅ Opening sample app deeplink view")
-      // Don't close sheets yet - openDeepLinkView will handle it
+      print("✅ Demo app deeplink - opening test screen")
+      // This is just for the demo app's "Deeplink" button
+      // NOT for CMS buttons (those use DemoAppDeepLinkHandler)
       openDeepLinkView()
 
     case .leapSDK:
       print("🚀 Resolving LeapSDK deeplink...")
-      // Close sheets for SDK deeplinks since we're replacing with new content
       closeActiveSheet()
       Task {
         do {
