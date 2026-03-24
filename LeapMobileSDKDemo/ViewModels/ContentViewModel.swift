@@ -42,8 +42,45 @@ final class ContentViewModel: NSObject, ObservableObject {
   private var pendingDeeplink: URL?
   private var didTrackAnalytics = false
   
+  // SDK state preservation for deeplink handling
+  private var preservedBottomSheet: Sheet?
+  private var preservedFullScreenSheet: Sheet?
+  
   // MARK: - Init
-  override init() {}
+  override init() {
+    super.init()
+    setupExternalURLHandler()
+  }
+  
+  // MARK: - Setup
+  
+  private func setupExternalURLHandler() {
+    LeapMobileSDK.setExternalURLHandler { [weak self] url in
+      Task { @MainActor [weak self] in
+        self?.handleExternalURLWillOpen(url)
+      }
+    }
+  }
+  
+  private func handleExternalURLWillOpen(_ url: URL) {
+    print("🔗 [ContentViewModel] SDK will open external URL: \(url)")
+    
+    // Check if the URL is for the host app (sample app deeplink)
+    guard let scheme = url.scheme?.lowercased(),
+          scheme == DeeplinkScheme.sampleApp.rawValue else {
+      print("  ↳ Not a sample app deeplink, no state preservation needed")
+      return
+    }
+    
+    // Preserve current SDK sheet state
+    print("  ↳ Preserving SDK sheet state before opening deeplink")
+    preservedBottomSheet = activeBottomSheet
+    preservedFullScreenSheet = activeFullScreenSheet
+    
+    // Close the SDK sheets temporarily (they will be restored when deeplink screen is dismissed)
+    activeBottomSheet = nil
+    activeFullScreenSheet = nil
+  }
   
   // MARK: - Lifecycle
   
@@ -151,14 +188,29 @@ final class ContentViewModel: NSObject, ObservableObject {
   
   // MARK: - Deeplink Handling
   
+  func restoreSDKStateAfterDeeplink() {
+    print("🔄 [ContentViewModel] Restoring SDK state after deeplink dismissed")
+    
+    // Restore the preserved SDK sheet
+    if let preserved = preservedBottomSheet {
+      print("  ↳ Restoring bottom sheet")
+      activeBottomSheet = preserved
+      preservedBottomSheet = nil
+    } else if let preserved = preservedFullScreenSheet {
+      print("  ↳ Restoring full screen sheet")
+      activeFullScreenSheet = preserved
+      preservedFullScreenSheet = nil
+    } else {
+      print("  ↳ No preserved state to restore")
+    }
+  }
+  
   func handleDeeplink(
     _ url: URL,
     initialization: LeapMobileSDK.Initialization
   ) {
     print("🔗 Deeplink received: \(url.absoluteString)")
     print("🔗 SDK initialization state: \(initialization)")
-    
-    closeActiveSheet()
     
     // Check if SDK is initialized
     guard initialization == .initialized else {
@@ -182,7 +234,20 @@ final class ContentViewModel: NSObject, ObservableObject {
     switch scheme {
     case .sampleApp:
       print("✅ Opening sample app deeplink view")
-      isDeepLinkViewPresented = true
+      // Close any SDK sheets when opening deeplink directly from demo app
+      // (This is different from when SDK opens a deeplink via ExternalURLOpener,
+      // where we preserve the sheet)
+      if activeBottomSheet != nil || activeFullScreenSheet != nil {
+        print("  ↳ Closing SDK sheets (direct deeplink from demo app)")
+        closeActiveSheet()
+        // Give a tiny delay to ensure sheet dismissal completes before showing deeplink view
+        Task { @MainActor in
+          try? await Task.sleep(for: .milliseconds(100))
+          isDeepLinkViewPresented = true
+        }
+      } else {
+        isDeepLinkViewPresented = true
+      }
       
     case .leapSDK:
       print("🚀 Resolving LeapSDK deeplink...")

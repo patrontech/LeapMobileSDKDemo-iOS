@@ -38,8 +38,10 @@ struct DeeplinkView: View {
         }
         .padding()
       }
+      .background(Color(.systemBackground))
     }
     .navigationTitle("Deeplink Tests")
+    .background(Color(.systemBackground))
   }
   
   private func openDeeplink(_ urlString: String) {
