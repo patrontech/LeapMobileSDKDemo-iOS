@@ -40,7 +40,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>NordhinRegular.ttf</string>
-		<string>JMH Typewriter.otf</string>
+		<string>JMHTypewriterRegular.otf</string>
 	</array>
 </dict>
 </plist>
