@@ -55,6 +55,7 @@ struct ContentView: View {
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
         .ignoresSafeArea()
+        .navigationBarHidden(true)
     }
     .sheet(isPresented: $viewModel.isWebViewPresented) {
       NavigationStack {
@@ -70,8 +71,12 @@ struct ContentView: View {
         
         if viewModel.isAtRootScreen {
           CircularIconButton(
-            icon: .assetName("chevron"),
-            action: { viewModel.closeActiveSheet() }
+            icon: .systemName("xmark"),
+            action: { viewModel.closeActiveSheet() },
+            backgroundColor: .white,
+            iconColor: .black,
+            iconSize: 16,
+            padding: 12
           )
           .padding(.top, 8)
           .padding(.leading, 16)
