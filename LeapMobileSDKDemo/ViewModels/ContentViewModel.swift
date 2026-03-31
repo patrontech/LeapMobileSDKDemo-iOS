@@ -79,7 +79,7 @@ final class ContentViewModel: NSObject, ObservableObject {
   }
   
   private func openSDK(
-    with viewController: UIViewController, 
+    with viewController: UIViewController,
     style: SDKPresentationStyle,
     shouldCloseFirst: Bool
   ) {
