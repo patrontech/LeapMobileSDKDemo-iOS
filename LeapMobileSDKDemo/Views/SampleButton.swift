@@ -7,22 +7,20 @@
 
 import SwiftUI
 
-struct FilterChipButton: View {
+struct SampleButton: View {
   
   let title: String
-  let isSelected: Bool
   let action: () -> Void
   
   var body: some View {
     Button(action: action) {
       Text(title)
-        .font(.subheadline)
+        .frame(maxWidth: .infinity)
+        .font(.headline)
         .fontWeight(.medium)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .background(isSelected ? Color.black : Color(.systemGray5))
-        .foregroundColor(isSelected ? .white : .black)
-        .cornerRadius(20)
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
     .buttonStyle(.plain)
   }
