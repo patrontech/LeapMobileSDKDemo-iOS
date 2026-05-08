@@ -25,4 +25,3 @@ struct SampleButton: View {
     .buttonStyle(.plain)
   }
 }
-
