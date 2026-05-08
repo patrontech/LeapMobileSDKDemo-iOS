@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:patrontech/LeapMobileSDK-iOS.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "751e6840901112a69834e9279d353d7f009b5273"
+        "revision" : "a217ecab3f148dd598c7b283defccf5a3c4a6e66",
+        "version" : "0.9.5"
       }
     },
     {
@@ -105,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-composable-architecture",
       "state" : {
-        "revision" : "df934d9c5a274a6f6a7bdcec73fbcb330149ff8b",
-        "version" : "1.23.2"
+        "revision" : "acd9bb8a7cf6e36a89d81a432c2e8eb3b1bb3771",
+        "version" : "1.22.2"
       }
     },
     {
