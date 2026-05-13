@@ -28,21 +28,11 @@ struct LeapMobileSDKDemoApp: App {
   private func initializeSDKIfNeeded() async {
     guard initialization == .uninitialized else { return }
 
-    let secrets: [Secret: String] = [
-      .otaZip: "15bf9cb77aa74de693cd678ebcbbec05",
-      .notificationRegistrationApi: "foo",
-      .notificationInboxApi: "bar",
-      .remoteStateApi: "baz",
-      .showclixApi: "biz",
-      .accountDeletionApi: "boz"
-    ]
-
     let logger = DemoLogger()
     let analytics = DemoAnalyticsProvider(logger: logger)
 
     do {
       try await LeapMobileSDK.initialize(
-        secrets: secrets,
         metricsProviders: [analytics],
         logging: .logger(logger)
       )

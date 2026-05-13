@@ -11,7 +11,7 @@ struct DeeplinkItem: Identifiable {
 struct DeeplinkView: View {
   
   let deeplinks: [DeeplinkItem] = [
-    DeeplinkItem(title: "Schedule", url: "\(DeeplinkItem.schema)schedule"),
+    DeeplinkItem(title: "Schedule", url: "\(DeeplinkItem.schema)scheduleList"),
     DeeplinkItem(title: "Talents", url: "\(DeeplinkItem.schema)talents"),
     DeeplinkItem(title: "Brands", url: "\(DeeplinkItem.schema)brands"),
     DeeplinkItem(title: "Registration", url: "\(DeeplinkItem.schema)thuziRegistration"),
