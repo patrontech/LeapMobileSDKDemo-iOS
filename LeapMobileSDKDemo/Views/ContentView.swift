@@ -90,93 +90,67 @@ struct ContentView: View {
   private var mainContent: some View {
     NavigationStack {
       VStack(spacing: 12) {
-        header
-        filters
-        productList
+        scrollView
       }
       .navigationBarHidden(true)
     }
   }
   
-  // MARK: - Header
+  // MARK: - ScrollView
   
-  private var header: some View {
-    HStack {
-      HStack {
-        Image(systemName: "magnifyingglass")
-          .foregroundColor(.gray)
-        Text("Search")
-          .foregroundColor(.gray)
-        Spacer()
-      }
-      .padding(10)
-      .background(Color(.systemGray6))
-      .cornerRadius(12)
-      
-      Button {
-      } label: {
-        Text("Search")
-          .fontWeight(.semibold)
-          .padding(.horizontal, 16)
-          .padding(.vertical, 10)
-          .background(Color.green)
-          .foregroundColor(.black)
-          .cornerRadius(16)
-      }
-    }
-    .padding(.horizontal)
-  }
-  
-  // MARK: - Filters
-  
-  private var filters: some View {
-    ScrollView(.horizontal, showsIndicators: false) {
-      HStack(spacing: 8) {
-        FilterChipButton(title: "Open SDK", isSelected: true) {
-          viewModel.openSDK(style: .bottomSheet)
-        }
-        FilterChipButton(title: "Logout", isSelected: false) {
-          viewModel.logoutUser()
-        }
-        FilterChipButton(title: "Deeplink", isSelected: false) {
+  private var scrollView: some View {
+    ScrollView(.vertical, showsIndicators: false) {
+      LazyVStack(spacing: 8) {
+        Text("Deeplinks")
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .font(.headline)
+          .fontWeight(.bold)
+          .padding()
+        SampleButton(title: "Deeplink Examples") {
           viewModel.openDeepLinkView()
         }
-        FilterChipButton(title: "SSOWebView", isSelected: false) {
-          viewModel.openSSOWebView()
-        }
-        FilterChipButton(title: "Open SDK Full", isSelected: false) {
-          viewModel.openSDK(style: .fullScreen)
-        }
-        
-        // Notification test buttons
-        FilterChipButton(title: "🔔 Schedule", isSelected: false) {
+        Text("Notifications")
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .font(.headline)
+          .fontWeight(.bold)
+          .padding()
+        SampleButton(title: "Schedule") {
           viewModel.sendTestNotification(.rewards)
         }
-        FilterChipButton(title: "🔔 Talents", isSelected: false) {
+        SampleButton(title: "Talents") {
           viewModel.sendTestNotification(.events)
         }
-        FilterChipButton(title: "🔔 Brands", isSelected: false) {
+        SampleButton(title: "Brands") {
           viewModel.sendTestNotification(.profile)
         }
-        FilterChipButton(title: "🔔 Sample", isSelected: false) {
+        SampleButton(title: "Sample") {
           viewModel.sendTestNotification(.sampleApp)
         }
-      }
-      .padding(.horizontal)
-    }
-  }
-  
-  // MARK: - Product List
-  
-  private var productList: some View {
-    ScrollView {
-      LazyVStack(spacing: 16) {
-        ForEach(products) { product in
-          ProductCard(product: product)
+        Text("SSO Cookies")
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .font(.headline)
+          .fontWeight(.bold)
+          .padding()
+        SampleButton(title: "Authentication Webview") {
+          viewModel.openSSOWebView()
+        }
+        Text("Main SDK Features")
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .font(.headline)
+          .fontWeight(.bold)
+          .padding()
+        SampleButton(title: "Start SDK") {
+          viewModel.openSDK(style: .bottomSheet)
+        }
+        SampleButton(title: "Start SDK - Full Screen") {
+          viewModel.openSDK(style: .fullScreen)
+        }
+        SampleButton(title: "Logout SDK") {
+          viewModel.logoutUser()
         }
       }
+      .frame(maxWidth: .infinity)
       .padding(.horizontal)
-      .padding(.bottom, 20)
     }
   }
 }
