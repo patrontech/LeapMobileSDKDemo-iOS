@@ -49,11 +49,10 @@ The SDK must be initialized before any other method is called. Due to internal S
     let analytics = DemoAnalyticsProvider(logger: logger)
 ```
 
-### Example from sample app of initialization
+### Example of the initialization from the sample app
 
 ``` swift
     try await LeapMobileSDK.initialize(
-        secrets: secrets,
         metricsProviders: [analytics],
         logging: .logger(logger)
       )
@@ -160,9 +159,9 @@ This demo app includes built-in tools to test push notifications and deeplink ha
 
 The app includes filter chip buttons that trigger local push notifications with deeplink payloads:
 
-- **🔔 Schedule** - Sends a notification that opens `fanaticssdkstaging://schedule`
-- **🔔 Talents** - Sends a notification that opens `fanaticssdkstaging://talents`
-- **🔔 Brands** - Sends a notification that opens `fanaticssdkstaging://brands`
+- **🔔 Schedule** - Sends a notification that opens `leapfanfest://scheduleList`
+- **🔔 Talents** - Sends a notification that opens `leapfanfest://talents`
+- **🔔 Brands** - Sends a notification that opens `leapfanfest://brands`
 - **🔔 Sample** - Sends a notification that opens `sampleapp://test`
 
 ### How it works:
@@ -180,9 +179,9 @@ On first launch, the app automatically requests notification permissions. If den
 
 ## Available Deeplink Schemes
 
-1. **LeapSDK Scheme**: `fanaticssdkstaging://`
+1. **LeapSDK Scheme**: `leapfanfest://`
    - Resolves through the LeapMobileSDK
-   - Examples: `fanaticssdkstaging://schedule`, `fanaticssdkstaging://talents`, `fanaticssdkstaging://brands`
+   - Examples: `leapfanfest://schedule`, `leapfanfest://talents`, `leapfanfest://brands`
 
 2. **Sample App Scheme**: `sampleapp://`
    - Opens the demo deeplink view
