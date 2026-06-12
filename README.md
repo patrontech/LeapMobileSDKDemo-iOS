@@ -102,7 +102,22 @@ private func openSDK(with viewController: UIViewController, style: SDKPresentati
 
 > **Note:** Wrapping the root view controller in a `UINavigationController` is recommended. Some internal SDK features require a navigation controller to function correctly. For deep link flows, it may be omitted, as shown in the next section.
 
-#### 2. Deep Links
+> **Important:** The root view controller is built on demand and is **not** cached. Each access to `rootViewController` returns a freshly built view controller that reflects the latest content (including any over-the-air content update that has been downloaded). A view controller you obtained earlier will **not** update itself when new content arrives. To display updated content, call `rootViewController` again and present the new instance — reusing a previously retrieved view controller will keep showing the old content.
+>
+> To know *when* new content is ready, observe the `NSNotification.Name.leapMobileOTAAvailable` notification (raw value `"LeapMobile.OTAAvailable"`). The SDK posts it when the app enters the foreground and a new OTA content update is available. Treat it as your signal to call `rootViewController` again to obtain a new instance reflecting the updated content. For example:
+>
+> ```swift
+> NotificationCenter.default.addObserver(
+>   forName: .leapMobileOTAAvailable,
+>   object: nil,
+>   queue: .main
+> ) { [weak self] _ in
+>   self?.openSDK(style: .fullScreen)  // re-fetches rootViewController
+> }Expand commentComment on lines R159 to R168Resolved
+> ```
+
+
+#### 2. Deeplinks
 
 Call `resolveDeepLink(_:)` asynchronously with the incoming URL. The method returns `nil` if the URL cannot be resolved by the SDK — handle this case in your implementation.
 
