@@ -173,12 +173,12 @@ The demo app includes built-in tools for testing push notifications and deep lin
 
 Tapping any of the notification buttons schedules a local push notification with a deep link payload:
 
-| Button | Deep Link |
-|---|---|
-| 🔔 Schedule | `fanaticssdkstaging://schedule` |
-| 🔔 Talents | `fanaticssdkstaging://talents` |
-| 🔔 Brands | `fanaticssdkstaging://brands` |
-| 🔔 Sample | `sampleapp://test` |
+| Button | staging | prod |
+|---|---|---|
+| 🔔 Schedule | `fanaticssdkstaging://schedule` | `leapfanfest://schedule` |
+| 🔔 Talents | `fanaticssdkstaging://talents` | `leapfanfest://talents` |
+| 🔔 Brands | `fanaticssdkstaging://brands` | `leapfanfest://brands` |
+| 🔔 Sample | `sampleapp://test` | `sampleapp://test` |
 
 **Flow:**
 1. Tap a notification button.
