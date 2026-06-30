@@ -104,14 +104,16 @@ private func openSDK(with viewController: UIViewController, style: SDKPresentati
 
 #### 2. Deep Links
 
-Call `resolveDeepLink(_:)` asynchronously with the incoming URL. The method returns `nil` if the URL cannot be resolved by the SDK — handle this case in your implementation.
+Call `showDeepLink(_:on:)` asynchronously with the incoming URL and a presenter view controller.
 
 ```swift
 Task {
-    let urlResolved = try await LeapMobileSDK.resolveDeepLink(url)
-    openSDK(with: urlResolved, style: .bottomSheet)
+    guard let presenter = Self.topMostViewController() else { return }
+    try await LeapMobileSDK.showDeepLink(url, on: presenter)
 }
 ```
+
+> If the URL cannot be resolved by the SDK, `showDeepLink(_:on:)` throws `noSuchDeepLink`.
 
 #### 3. WebView Data Store
 
@@ -171,12 +173,12 @@ The demo app includes built-in tools for testing push notifications and deep lin
 
 Tapping any of the notification buttons schedules a local push notification with a deep link payload:
 
-| Button | Deep Link |
-|---|---|
-| 🔔 Schedule | `leapfanfest://scheduleList` |
-| 🔔 Talents | `leapfanfest://talents` |
-| 🔔 Brands | `leapfanfest://brands` |
-| 🔔 Sample | `sampleapp://test` |
+| Button | staging | prod |
+|---|---|---|
+| 🔔 Schedule | `fanaticssdkstaging://schedule` | `leapfanfest://schedule` |
+| 🔔 Talents | `fanaticssdkstaging://talents` | `leapfanfest://talents` |
+| 🔔 Brands | `fanaticssdkstaging://brands` | `leapfanfest://brands` |
+| 🔔 Sample | `sampleapp://test` | `sampleapp://test` |
 
 **Flow:**
 1. Tap a notification button.
@@ -194,8 +196,22 @@ On first launch the app requests notification permissions. If denied, enable the
 
 | Scheme | Handler | Examples |
 |---|---|---|
-| `leapfanfest://` | LeapMobileSDK | `leapfanfest://schedule`, `leapfanfest://talents`, `leapfanfest://brands` |
+| `fanaticssdkstaging://` | LeapMobileSDK | `fanaticssdkstaging://schedule`, `fanaticssdkstaging://talents`, `fanaticssdkstaging://brands` |
 | `sampleapp://` | Demo app | `sampleapp://test` |
+
+### Testing with `xcrun simctl openurl`
+
+You can trigger deep links directly from Terminal while the app is running in the booted simulator:
+
+```bash
+xcrun simctl openurl booted fanaticssdkstaging://webViewViewTickets
+```
+
+Use the same command format for other URLs, for example:
+
+```bash
+xcrun simctl openurl booted fanaticssdkstaging://schedule
+```
 
 ### Testing Flow
 

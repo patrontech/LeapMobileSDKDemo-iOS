@@ -199,15 +199,28 @@ final class ContentViewModel: NSObject, ObservableObject {
       isDeepLinkViewPresented = true
       
     case .leapSDK:
-      closeActiveSheet()
       Task {
+        guard let presenter = Self.topMostViewController() else { return }
         do {
-          let urlResolved = try await LeapMobileSDK.resolveDeepLink(url)
-          openSDK(with: urlResolved, style: .bottomSheet)
+          try await LeapMobileSDK.showDeepLink(url, on: presenter)
         } catch {
         }
       }
     }
+  }
+
+  /// Walks the presentation stack from the key window's root to find the
+  /// view controller the SDK should present the deeplink on.
+  private static func topMostViewController() -> UIViewController? {
+    let keyWindow = UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap(\.windows)
+      .first(where: \.isKeyWindow)
+    var top = keyWindow?.rootViewController
+    while let presented = top?.presentedViewController {
+      top = presented
+    }
+    return top
   }
   
   func onSDKInitialized() {
