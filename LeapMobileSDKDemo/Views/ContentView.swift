@@ -5,18 +5,18 @@
 //  Created by Diego Cichello on 14/01/26.
 //
 import SwiftUI
-import LeapMobile
+import DemoSDK
 
 struct ContentView: View {
   
-  @Binding var initialization: LeapMobileSDK.Initialization
+  @Binding var state: Leap.State
   @Binding var deeplinkToHandle: URL?
   @StateObject private var viewModel = ContentViewModel()
   let products = Product.mock
   
   var body: some View {
     Group {
-      if initialization == .initialized {
+      if state == .initialized {
         mainContent
       } else {
         ProgressView()
@@ -25,11 +25,16 @@ struct ContentView: View {
       }
     }
     .onOpenURL { url in
-      viewModel.handleDeeplink(url, initialization: initialization)
+      viewModel.handleDeeplink(url, state: state)
+    }
+    .onChange(of: state) { _, newValue in
+      guard newValue == .initialized else { return }
+      viewModel.onSDKInitialized()
+      viewModel.onAppear()
     }
     .onChange(of: deeplinkToHandle) { _, newValue in
       if let url = newValue {
-        viewModel.handleDeeplink(url, initialization: initialization)
+        viewModel.handleDeeplink(url, state: state)
         deeplinkToHandle = nil
       }
     }

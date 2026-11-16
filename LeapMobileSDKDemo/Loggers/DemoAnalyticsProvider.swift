@@ -5,8 +5,7 @@
 //  Created by Gregory Higley on 2025-12-10.
 //
 
-import LeapMobile
-import LeapMobileBase
+import DemoSDK
 
 extension Provider {
   static let demo: Provider = "demo"
@@ -22,11 +21,11 @@ extension EventParameter {
 
 struct DemoEvent: MappedMetrics {
   let message: String?
-  
+
   init(message: String? = nil) {
     self.message = message
   }
-  
+
   func track(with provider: any MappedProvider) {
     var params: [EventParameter: any MappedValue] = [:]
     if let message {
@@ -38,10 +37,8 @@ struct DemoEvent: MappedMetrics {
 
 struct DemoAnalyticsProvider: MappedProvider {
   let provider: Provider = .demo
-  let logger: CustomLogger
 
-  init(logger: CustomLogger) {
-    self.logger = logger
+  init() {
     // Rename an event, just for this analytics provider
 //    EventName.screenView[.demo] = "screen_blast"
     // Skip an event, just for this analytics provider
@@ -51,19 +48,17 @@ struct DemoAnalyticsProvider: MappedProvider {
   func track(event: EventName, parameters: [EventParameter: MappedValue]) {
     guard let event = event[provider] else { return }
     if event == "demo", let message = parameters[.message] {
-      logger.log("ANALYTICS: \(message)", level: .info)
+      print("ANALYTICS: \(message)")
     } else {
-      logger.log("ANALYTICS: \(event) has occurred.", level: .info)
+      print("ANALYTICS: \(event) has occurred.")
     }
-    let parameters = parameters.mapKeys { $0[provider] }
-    for (param, value) in parameters {
-      guard let param else { continue }
-      logger.log("ANALYTICS: \(event) PARAM: \(param): \(value)", level: .info)
+    for (param, value) in parameters.dictionary(for: provider) {
+      print("ANALYTICS: \(event) PARAM: \(param): \(value)")
     }
   }
 
   // You probably won't need this.
-  func track(user properties: [LeapMobileBase.UserProperty : any LeapMobileBase.MappedValue]) {
+  func track(user properties: [UserProperty: any MappedValue]) {
     // etc.
   }
 }

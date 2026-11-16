@@ -11,22 +11,33 @@ The LeapMobile SDK allows host applications to embed Leap experiences, including
 
 ---
 
-## 1. Initial Setup
+## 1. How this demo is put together
 
-### Requirements
+A partner never sees Library directly. It gets an SDK built from a package of its own, which embeds the
+content and the secrets, so that the host app passes neither. This demo has the same three layers:
 
-- Xcode 16+
-- iOS 16+
-- Access to the private repository (SSH key or GitHub token)
+| Layer | Here | For a partner |
+|---|---|---|
+| Host app | `LeapMobileSDKDemo` | The partner's app |
+| SDK package: content, secrets, customizations | `DemoSDK/` (local package) | One package per partner, shipped as an xcframework |
+| The SDK itself | `../Library`, with `traits: ["SDKBase"]` | The same, compiled into the xcframework |
 
-### Adding the SDK Package
+`DemoSDK` takes Library **as source**, from the workspace (`../../Library` from `DemoSDK/`), so this repo
+must be checked out beside a `Library` worktree. A partner gets an xcframework instead, so this demo
+can't catch xcframework or library-evolution problems.
 
-The LeapMobile SDK is distributed as a private Swift Package.
+### Content and secrets
 
-1. Open Xcode.
-2. Go to **File > Add Package Dependencies**.
-3. Enter the repository SSH URL: `git@github.com:patrontech/LeapMobileSDK-iOS.git`
-4. Add the `-ObjC` flag to **Build Settings → Other Linker Flags** for your target. This is required to support the `.nib` files bundled with the SDK.
+`DemoSDK`'s content and secrets are not committed. Generate them, with AWS credentials (`aws sso login`):
+
+```bash
+scripts/sdk-content                                 # fanaticssdkstaging-2025, preprod
+scripts/sdk-content <project> <environment>         # any other CMS project
+```
+
+It fetches the project with turbopump, copies `runConfig.json` and the initial content zip into
+`DemoSDK/Sources/DemoSDK/Resources/`, and generates `DemoSDK/Sources/DemoSDK/Generated/Secrets.swift`.
+Without them `DemoSDK` doesn't compile.
 
 ---
 
@@ -34,149 +45,77 @@ The LeapMobile SDK is distributed as a private Swift Package.
 
 ### Initialization
 
-The SDK must be initialized before calling any other method. Initialization is asynchronous.
-
-**Required parameters:**
-
-| Parameter | Type |
-|---|---|
-| `metricsProviders` | `[AnalyticsProvider]` |
-| `logging` | `LoggingConfiguration` |
-
-#### Analytics and Logging
-
-- To use a custom logger, implement the `CustomLogger` protocol from the `LeapMobile` module.
-- To use a custom analytics provider, implement the `MappedProvider` protocol from the `LeapMobileBase` module.
+Initialize once, as early as convenient. The host passes only options, all of them optional:
 
 ```swift
-let logger = DemoLogger()
-let analytics = DemoAnalyticsProvider(logger: logger)
-```
-
-#### Example
-
-```swift
-try await LeapMobileSDK.initialize(
-    metricsProviders: [analytics],
-    logging: .logger(logger)
+try await DemoSDK.initialize(
+  options: .init(
+    logger: DemoLogger(),
+    analyticsProviders: [DemoAnalyticsProvider()],
+    externalURLHandler: ContentViewModel.handleExternalURL
+  )
 )
 ```
 
-### Initialization States
+`DemoSDK.initialize` is the partner-facing wrapper. It calls `Leap.initialize`, adding the content
+and secrets the host never sees. Everything else comes from `LeapMobileSDK`, which `DemoSDK`
+re-exports: `Leap`, `Leap.Options`, `LeapError`, and the `Logger` and analytics types the host
+implements. Nothing else of Library's is visible to the host.
 
-The SDK exposes an `initialization` property reflecting its current state:
-
-| State | Description |
+| Option | What it does |
 |---|---|
-| `uninitialized` | Initialization has not started |
-| `initializing` | Initialization is in progress |
-| `initialized` | Initialization completed successfully |
+| `logger` | The host's own `Logger`, which receives every message the SDK logs. Without one the SDK writes nothing anywhere, unified logging included. |
+| `analyticsProviders` | `MappedProvider`s that receive the SDK's analytics events. Without any, nothing is tracked. |
+| `externalURLHandler` | Sees each URL the SDK opens outside itself. Return `true` if the host handled it, `false` to have the SDK open it as usual. The demo handles its own `sampleapp://` scheme in place. |
 
----
+The SDK links no third-party logging or analytics SDK, such as Sentry, Crashlytics or Firebase, and
+starts no logging or analytics of its own. What it logs and tracks goes only to the `Logger` and
+providers the host passes, so a host's own copies of those SDKs never meet a second one.
+
+`Leap.state` is `.uninitialized`, `.initializing` or `.initialized`.
 
 ### Presenting the SDK
 
-#### 1. Root Presentation
+```swift
+let root = try await Leap.makeRootViewController()
+```
 
-Retrieve the SDK's `rootViewController` asynchronously and present it using your preferred method (modal, push, etc.).
+Present it however you like. It's already in a navigation controller, and it lays itself out in the
+content's language direction without changing yours. Each call builds a new one from the newest content
+the SDK has, and it becomes the root that deep links are followed in. Show one at a time and drop the
+old one when you replace it: the SDK's colors, strings and images are shared, so newer content applied
+for a new root changes them in the old one too.
+
+When the app returns to the foreground with newer content than the SDK's root shows, the SDK posts
+`.leapContentUpdateAvailable`. The next root built applies it.
+
+### Deep links
 
 ```swift
-func openSDK(style: SDKPresentationStyle) {
-    Task {
-        let rootVC = try await LeapMobileSDK.rootViewController
-        openSDK(with: rootVC, style: style)
-    }
-}
-
-private func openSDK(with viewController: UIViewController, style: SDKPresentationStyle) {
-    closeActiveSheet()
-    switch style {
-    case .bottomSheet:
-        let nav = UINavigationController(rootViewController: viewController)
-        activeBottomSheet = Sheet(nav)
-    case .fullScreen:
-        activeFullScreenSheet = Sheet(viewController)
-    }
+if Leap.canHandleDeepLink(url) {
+  try await Leap.showDeepLink(url, from: presenter)
 }
 ```
 
-> **Note:** Wrapping the root view controller in a `UINavigationController` is recommended. Some internal SDK features require a navigation controller to function correctly. For deep link flows, it may be omitted, as shown in the next section.
+A link is the SDK's only if its scheme is one the embedding package declares
+(`Configuration.deepLinkSchemes`; `fanaticssdkstaging` here) and the content knows its name. If the
+SDK's root is on screen, the link is followed inside it. Otherwise the screen it names is presented from
+`presenter`. `Leap.viewController(forDeepLink:)` builds the screen without presenting it, for a host
+that wants to present it itself.
 
-> **Important:** The root view controller is built on demand and is **not** cached. Each access to `rootViewController` returns a freshly built view controller that reflects the latest content (including any over-the-air content update that has been downloaded). A view controller you obtained earlier will **not** update itself when new content arrives. To display updated content, call `rootViewController` again and present the new instance — reusing a previously retrieved view controller will keep showing the old content.
->
-> To know *when* new content is ready, observe the `NSNotification.Name.leapMobileOTAAvailable` notification (raw value `"LeapMobile.OTAAvailable"`). The SDK posts it when the app enters the foreground and a new OTA content update is available. Treat it as your signal to call `rootViewController` again to obtain a new instance reflecting the updated content. For example:
->
-> ```swift
-> NotificationCenter.default.addObserver(
->   forName: .leapMobileOTAAvailable,
->   object: nil,
->   queue: .main
-> ) { [weak self] _ in
->   self?.openSDK(style: .fullScreen)  // re-fetches rootViewController
-> }Expand commentComment on lines R159 to R168Resolved
-> ```
+### Logout and analytics
 
+- `Leap.logOut()` logs the user out of whatever the SDK signed them in to.
+- `Leap.track(_:)` sends one of the host's own events to every analytics provider.
 
-#### 2. Deeplinks
+### WebView data store
 
-Call `showDeepLink(_:on:)` asynchronously with the incoming URL and a presenter view controller.
+To share cookies with the SDK's web views, use `WKWebsiteDataStore.default()` in the host's own.
 
-```swift
-Task {
-    guard let presenter = Self.topMostViewController() else { return }
-    try await LeapMobileSDK.showDeepLink(url, on: presenter)
-}
-```
+### Errors
 
-> If the URL cannot be resolved by the SDK, `showDeepLink(_:on:)` throws `noSuchDeepLink`.
-
-#### 3. WebView Data Store
-
-To share cookies and storage between the host app's web views and SDK web views, use the `.default()` `WKWebsiteDataStore`.
-
-```swift
-func openWebView(urlString: String) -> some View {
-    let url = URL(string: urlString)!
-    let dataStore: WKWebsiteDataStore = .default()
-    return CustomWebView(url: url, dataStore: dataStore)
-}
-```
-
-#### 4. SSO Logout
-
-Call `logoutUser()` to notify the SDK that the current user has been logged out.
-
-```swift
-func logoutUser() async throws
-```
-
-**Example:**
-
-```swift
-Task {
-    try await LeapMobileSDK.logoutUser()
-}
-```
-
-> Documentation for SSO Login and SSO State Listener will be added when these features are available.
-
----
-
-### Error Handling
-
-All async SDK methods may throw. Handle errors gracefully and provide fallback UI where appropriate.
-
-| Error | Description |
-|---|---|
-| `sdkNotInitialized` | A method was called before the SDK was initialized |
-| `noSuchDeepLink` | The provided deep link URL could not be resolved |
-| `sdkInitialized` | A generic error thrown while the SDK was already initialized |
-| `sdkInitializing` | A generic error thrown during initialization |
-
-### Common Pitfalls
-
-- Calling SDK methods before initialization completes
-- Not wrapping `rootViewController` in a `UINavigationController` when required by internal flows
+`LeapError`: `initializationInProgress`, `alreadyInitialized`, `notInitialized`,
+`unknownDeepLink(URL)`, `unsupportedDeepLink(URL)`.
 
 ---
 
@@ -211,7 +150,7 @@ On first launch the app requests notification permissions. If denied, enable the
 
 | Scheme | Handler | Examples |
 |---|---|---|
-| `fanaticssdkstaging://` | LeapMobileSDK | `fanaticssdkstaging://schedule`, `fanaticssdkstaging://talents`, `fanaticssdkstaging://brands` |
+| `fanaticssdkstaging://` | SDK | `fanaticssdkstaging://schedule`, `fanaticssdkstaging://talents`, `fanaticssdkstaging://brands` |
 | `sampleapp://` | Demo app | `sampleapp://test` |
 
 ### Testing with `xcrun simctl openurl`
@@ -241,4 +180,4 @@ xcrun simctl openurl booted fanaticssdkstaging://schedule
 - Check console logs for SDK initialization status and deep link resolution results.
 - Verify notification permissions in the Settings app.
 - Ensure the SDK is fully initialized before testing deep links.
-- Use the "Deeplink" button to manually test URL input
+- Use the "Deeplink" button to manually test URL input.
