@@ -5,18 +5,18 @@
 //  Created by Gregory Higley on 2025-12-08.
 //
 
-import LeapMobile
+import DemoSDK
 import SwiftUI
 
 @main
 struct LeapMobileSDKDemoApp: App {
 
-  @State private var initialization: LeapMobileSDK.Initialization = .uninitialized
+  @State private var state: Leap.State = .uninitialized
   @State private var deeplinkToHandle: URL?
 
   var body: some Scene {
     WindowGroup {
-      RootView(initialization: $initialization, deeplinkToHandle: $deeplinkToHandle)
+      RootView(state: $state, deeplinkToHandle: $deeplinkToHandle)
         .task {
           await initializeSDKIfNeeded()
           await setupNotifications()
@@ -26,24 +26,24 @@ struct LeapMobileSDKDemoApp: App {
 
   @MainActor
   private func initializeSDKIfNeeded() async {
-    guard initialization == .uninitialized else { return }
+    guard state == .uninitialized else { return }
 
     let logger = DemoLogger()
-    let analytics = DemoAnalyticsProvider(logger: logger)
+    let analytics = DemoAnalyticsProvider()
 
     do {
-      try await LeapMobileSDK.initialize(
-        metricsProviders: [analytics],
-        logging: .logger(logger)
+      // The host passes no content and no secrets: those are DemoSDK's.
+      try await DemoSDK.initialize(
+        options: .init(
+          logger: logger,
+          analyticsProviders: [analytics],
+          externalURLHandler: ContentViewModel.handleExternalURL,
+        )
       )
-      initialization = LeapMobileSDK.initialization
-
-      // Trigger OTA check immediately after initialization
-      logger.info("Triggering OTA check after initialization")
-      NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
     } catch {
-      logger.error(error)
+      logger.error("SDK initialization failed", error: error)
     }
+    state = Leap.state
   }
 
   @MainActor

@@ -1,0 +1,8 @@
+[plugins]
+leap = "git@github.com:patrontech/mise-leap.git"
+
+[tools]
+jq = "latest"
+'leap:go-turbopump' = "latest"
+"leap:turbopump" = "1.28.4"
+tuist = { version = "4.209.0", os = ["macos"] }

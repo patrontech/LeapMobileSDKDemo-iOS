@@ -5,17 +5,17 @@
 //  Created by Diego Cichello on 15/01/26.
 //
 
-import LeapMobile
+import DemoSDK
 import SwiftUI
 
 struct RootView: View {
 
-  @Binding var initialization: LeapMobileSDK.Initialization
+  @Binding var state: Leap.State
   @Binding var deeplinkToHandle: URL?
 
   var body: some View {
     ContentView(
-      initialization: $initialization,
+      state: $state,
       deeplinkToHandle: $deeplinkToHandle
     )
   }

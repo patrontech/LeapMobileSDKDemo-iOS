@@ -5,16 +5,14 @@
 //  Created by Diego Cichello on 14/01/26.
 //
 
-import LeapMobile
+import DemoSDK
 import Combine
 import SwiftUI
 import WebKit
 import UIKit
 
-private enum DeeplinkScheme: String {
-  case sampleApp = "sampleapp"
-  case leapSDK = "fanaticssdkstaging"
-}
+/// The host app's own URL scheme. Everything else is offered to the SDK.
+private let sampleAppScheme = "sampleapp"
 
 enum SDKPresentationStyle {
   case fullScreen
@@ -41,19 +39,34 @@ final class ContentViewModel: NSObject, ObservableObject {
   // MARK: - Private
   private var pendingDeeplink: URL?
   private var didTrackAnalytics = false
-  
+  private var contentUpdateObserver: NSObjectProtocol?
+
+  /// The view model on screen, for the SDK's external URL handler to reach.
+  private static weak var current: ContentViewModel?
+
   // MARK: - Init
   override init() {
     super.init()
-    setupSDKPresentationManager()
-  }
-  
-  private func setupSDKPresentationManager() {
-    LeapMobileSDK.presentationManager.setRestorationHandler { [weak self] style, viewController in
-      guard let self = self else { return }
-      let localStyle: SDKPresentationStyle = style == .bottomSheet ? .bottomSheet : .fullScreen
-      self.openSDK(with: viewController, style: localStyle, shouldCloseFirst: false)
+    Self.current = self
+    contentUpdateObserver = NotificationCenter.default.addObserver(
+      forName: .leapContentUpdateAvailable,
+      object: nil,
+      queue: .main
+    ) { _ in
+      // A root built from now on shows the new content. One that is on screen keeps its own.
+      print("DEMO: The SDK has newer content. It will show the next time the SDK is opened.")
     }
+  }
+
+  // MARK: - External URLs
+
+  /// Every URL the SDK opens outside itself comes here first. The host's own links are handled in
+  /// place, without a round trip through the system; the rest the SDK opens as usual.
+  static func handleExternalURL(_ url: URL) -> Bool {
+    guard url.scheme?.lowercased() == sampleAppScheme, let viewModel = current else { return false }
+    viewModel.closeActiveSheet()
+    viewModel.isDeepLinkViewPresented = true
+    return true
   }
   
   // MARK: - Lifecycle
@@ -67,27 +80,17 @@ final class ContentViewModel: NSObject, ObservableObject {
   func openSDK(style: SDKPresentationStyle) {
     Task {
       do {
-        let rootVC = try await LeapMobileSDK.rootViewController
+        let rootVC = try await Leap.makeRootViewController()
         openSDK(with: rootVC, style: style)
       } catch {
+        print("DEMO: Couldn't open the SDK: \(error)")
       }
     }
   }
-  
+
   private func openSDK(with viewController: UIViewController, style: SDKPresentationStyle) {
-    openSDK(with: viewController, style: style, shouldCloseFirst: true)
-  }
-  
-  private func openSDK(
-    with viewController: UIViewController,
-    style: SDKPresentationStyle,
-    shouldCloseFirst: Bool
-  ) {
-    
-    if shouldCloseFirst {
-      closeActiveSheet()
-    }
-    
+    closeActiveSheet()
+
     let navController: UINavigationController
     if let existingNav = viewController as? UINavigationController {
       navController = existingNav
@@ -97,13 +100,7 @@ final class ContentViewModel: NSObject, ObservableObject {
     
     navController.delegate = self
     isAtRootScreen = navController.viewControllers.count == 1
-    
-    let presentationStyle: SDKPresentationManager.PresentationStyle = style == .bottomSheet ? .bottomSheet : .fullScreen
-    LeapMobileSDK.presentationManager.recordPresentation(
-      style: presentationStyle,
-      viewController: navController
-    )
-    
+
     switch style {
     case .bottomSheet:
       activeBottomSheet = Sheet(navController)
@@ -116,8 +113,6 @@ final class ContentViewModel: NSObject, ObservableObject {
   @MainActor
   func closeActiveSheet() {
     dismissSheets()
-    
-    LeapMobileSDK.presentationManager.clearPreservedState()
   }
   
   @MainActor
@@ -142,8 +137,10 @@ final class ContentViewModel: NSObject, ObservableObject {
   }
   
   func logoutUser() {
-    Task {
-      try await LeapMobileSDK.logoutUser()
+    do {
+      try Leap.logOut()
+    } catch {
+      print("DEMO: Couldn't log out: \(error)")
     }
   }
   
@@ -174,37 +171,30 @@ final class ContentViewModel: NSObject, ObservableObject {
   
   func handleDeeplink(
     _ url: URL,
-    initialization: LeapMobileSDK.Initialization
+    state: Leap.State
   ) {
-    
-    // Parse the URL scheme first to determine behavior
-    guard let urlScheme = url.scheme?.lowercased() else {
+    if url.scheme?.lowercased() == sampleAppScheme {
+      isDeepLinkViewPresented = true
       return
     }
-    
-    guard let scheme = DeeplinkScheme(rawValue: urlScheme) else {
-      return
-    }
-    
-    // Check if SDK is initialized
-    guard initialization == .initialized else {
+
+    // Hold on to it until the SDK can say whether it's one of its own.
+    guard state == .initialized else {
       pendingDeeplink = url
       return
     }
-    
-    // Handle based on scheme type
-    switch scheme {
-    case .sampleApp:
 
-      isDeepLinkViewPresented = true
-      
-    case .leapSDK:
-      Task {
-        guard let presenter = Self.topMostViewController() else { return }
-        do {
-          try await LeapMobileSDK.showDeepLink(url, on: presenter)
-        } catch {
-        }
+    guard Leap.canHandleDeepLink(url) else {
+      print("DEMO: Not a link the SDK knows: \(url)")
+      return
+    }
+
+    Task {
+      guard let presenter = Self.topMostViewController() else { return }
+      do {
+        try await Leap.showDeepLink(url, from: presenter)
+      } catch {
+        print("DEMO: Couldn't show \(url): \(error)")
       }
     }
   }
@@ -226,7 +216,7 @@ final class ContentViewModel: NSObject, ObservableObject {
   func onSDKInitialized() {
     guard let url = pendingDeeplink else { return }
     pendingDeeplink = nil
-    handleDeeplink(url, initialization: .initialized)
+    handleDeeplink(url, state: .initialized)
   }
   
   // MARK: - Private
@@ -235,7 +225,7 @@ final class ContentViewModel: NSObject, ObservableObject {
     guard !didTrackAnalytics else { return }
     didTrackAnalytics = true
     
-    try? LeapMobileSDK.track(
+    try? Leap.track(
       DemoEvent(message: "Custom message from demo!")
     )
   }

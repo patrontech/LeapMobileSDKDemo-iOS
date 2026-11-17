@@ -5,19 +5,21 @@
 //  Created by Gregory Higley on 2025-12-10.
 //
 
-import LeapMobile
-import LeapMobileBase
+import DemoSDK
 
-struct DemoLogger: CustomLogger {
-  func log(
-    _ message: String,
-    _ file: String,
-    _ function: String,
-    _ line: Int,
-    level: LogLevel,
-    tags: [LogTag]
-  ) {
-    if level <= .verbose { return }
-    print("DEMO: \(message)")
+/// Prints the SDK's log messages. Without a logger the SDK writes nothing anywhere, so this is all
+/// of its output.
+///
+/// Values the SDK marks private are shown only in a Debug build, as Library's own logging does.
+struct DemoLogger: Logger {
+  #if DEBUG
+    private let redactsPrivate = false
+  #else
+    private let redactsPrivate = true
+  #endif
+
+  func log(_ level: LogLevel, category: LogCategory, source: LogSource, content: () -> LogContent) {
+    guard level > .verbose else { return }
+    print("DEMO: [\(level)] \(category.name) - \(content().fullMessage(redactingPrivate: redactsPrivate))")
   }
 }
