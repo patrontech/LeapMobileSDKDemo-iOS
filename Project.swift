@@ -19,7 +19,7 @@ let settings: SettingsDictionary = [
   "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
   "SWIFT_EMIT_LOC_STRINGS": "YES",
   "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
-  "SWIFT_VERSION": "5.0",
+  "SWIFT_VERSION": "6.0",
 ]
 
 let project = Project(
